@@ -1,0 +1,64 @@
+<div class="tournament-list-container animate-fade">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Tournaments</h1>
+            <p class="text-muted mb-0">Discover and manage championship leagues</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 fw-bold shadow-sm"
+            [routerLink]="['/kkk/tournament-form']">
+            <i class="bi bi-plus-circle"></i> Create New Tournament
+        </button>
+    </div>
+
+    <div class="tournament-grid">
+        <div class="premium-tournament-card" *ngFor="let t of tournaments()">
+            <!-- Banner & Status -->
+            <div class="banner-container">
+                <img [src]="t.FullBannerURL" class="banner-img" [alt]="t.Name">
+                <div class="status-badge" [class]="(t.Status || '').toLowerCase()">{{ t.Status }}</div>
+                <div class="category-tag" *ngIf="t.Category">{{ t.Category }}</div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-container">
+                <div class="tournament-logo">
+                    <img [src]="t.FullLogoURL" [alt]="t.Name">
+                </div>
+
+                <h3 class="tournament-title">{{ t.Name }}</h3>
+                <p class="tournament-desc">{{ t.Description || 'No description provided for this tournament.' }}</p>
+
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="label">Date Range</div>
+                        <div class="value">{{ t.StartDate | date:'mediumDate' }}</div>
+                    </div>
+                    <div class="info-box text-end">
+                        <div class="label">Participants</div>
+                        <div class="value">{{ t.Teams?.length || 0 }} Teams</div>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn btn-primary flex-grow-1"
+                        [routerLink]="['/kkk/tournament-details', t.TournamentID]">
+                        Manage League
+                    </button>
+                    <button class="btn btn-light border px-3"
+                        [routerLink]="['/kkk/tournament-form', {id: t.TournamentID}]">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state animate-fade" *ngIf="tournaments().length === 0">
+        <div class="icon">🏆</div>
+        <h3>No active tournaments found</h3>
+        <p>Start your championship journey by creating your first tournament today.</p>
+        <button class="btn btn-primary mt-3 px-5 py-2 fw-bold" [routerLink]="['/kkk/tournament-form']">Create
+            Tournament</button>
+    </div>
+</div>

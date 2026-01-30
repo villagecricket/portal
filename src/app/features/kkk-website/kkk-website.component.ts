@@ -1,20 +1,23 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, OnInit, Inject, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { environment } from '@environments/environment';
 import { AuctionSessionService } from '@features/auction/services/auction-session.service';
 import { PlayerService } from '@features/players/services/players.service';
 import { TeamsService } from '@features/teams/services/teams.service';
+import { SettingsService } from '@core/services/settings.service';
 
 interface Team {
   Name: string;
   LogoURL: string;
-  captain?: string;
-  owner?: string;
-  trophies?: string;
-  matches?: number;
-  wins?: number;
-  founded?: string;
+  Captain?: string;
+  OwnerName?: string;
+  Founded?: string;
+  Location?: string;
+  Coach?: string;
+  Bio?: string;
+  Slogan?: string;
 }
 
 interface Album {
@@ -25,9 +28,15 @@ interface Album {
   images: { src: string; caption: string }[];
 }
 
+
 @Component({
   selector: 'app-kkk-website',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule
+  ],
   templateUrl: './kkk-website.component.html',
   styleUrl: './kkk-website.component.scss'
 })
@@ -52,117 +61,37 @@ export class KkkWebsiteComponent implements OnInit {
   currentPage: number = 1;
   playersPerPage: number = 8;
 
-  // KPL Winners
-  kplWinners = [
-    { season: 'KPL 2023', winner: 'Seven Stars', runnerUp: 'KKK Juniors' },
-    { season: 'KPL 2024', winner: 'Maverick Strikers', runnerUp: 'Power Hitters' },
-    { season: 'KPL 2025', winner: 'GJ Warriors', runnerUp: 'Seven Stars' },
-    { season: 'KPL 2026', winner: 'Maverick Strikers', runnerUp: 'GJ Warriors' }
-  ];
+  // Dynamic Settings Data
+  appSettings = signal<any>({});
+  carouselItems = signal<any[]>([]);
+  dynamicSponsors = signal<any[]>([]);
+  dynamicGallery = signal<any[]>([]);
 
-  sponsorsList: any[] = [
-    { logo: 'assets/sponsors/crenue.png', name: 'crenue', desc: 'Title Sponsor' },
-    { logo: 'https://cdn-icons-png.flaticon.com/512/869/869869.png', name: 'Sports Gear', desc: 'Kit Partner' },
-    { logo: 'https://cdn-icons-png.flaticon.com/512/3448/3448609.png', name: 'Refresh Co', desc: 'Hydration Partner' },
-    { logo: 'https://cdn-icons-png.flaticon.com/512/2830/2830283.png', name: 'Local Media', desc: 'Media Partner' },
-    { logo: 'https://cdn-icons-png.flaticon.com/512/732/732217.png', name: 'Community Bank', desc: 'Event Partner' },
-  ];
-
-  // Grid Images for KPL 2025
   gridImages = [
     'assets/GJ2026_3.jpeg',
-    'assets/default-player.jpeg',
+    'assets/MV_1.jpeg',
     'assets/MWPI3556.JPG',
     'assets/NMUM0899.JPG',
-    'assets/DXBQ2771.JPG',
+    'assets/MV_5.jpeg',
     'assets/IUEF1539.JPG'
   ];
 
-  // Upcoming Fixtures
-  upcomingFixtures = [
-    {
-      date: 'Jan 20, 2025',
-      time: '4:00 PM',
-      team1: 'Super Kings',
-      team2: 'Maverick Strikers',
-      venue: 'Main Ground'
-    },
-    {
-      date: 'Jan 21, 2025',
-      time: '9:00 AM',
-      team1: 'KKK Juniors',
-      team2: 'Thunder Bolts',
-      venue: 'Kattur Ground'
-    }
-  ];
 
-  // Gallery Categories
-  galleryCategories = [
-    { id: 'all', name: 'All Photos' },
-    { id: 'kpl', name: 'KPL Matches' },
-    { id: 'teams', name: 'Team Photos' },
-    { id: 'players', name: 'Players' },
-    { id: 'trophy', name: 'Trophy Ceremony' },
-    { id: 'celebration', name: 'Celebrations' }
-  ];
-
-  // Gallery Albums
-  galleryAlbums: Album[] = [
-    {
-      id: 'winning-moment',
-      title: 'Winning Moments',
-      coverImage: 'assets/IMG_3562.JPG',
-      category: 'trophy',
-      images: [
-        { src: 'assets/IMG_3562.JPG', caption: 'Lifting the Trophy' },
-        { src: 'assets/MWPI3556.JPG', caption: 'Team Celebration' },
-        { src: 'assets/hero-image.jpeg', caption: 'Victory Lap' },
-        { src: 'assets/IMG_3562.JPG', caption: 'Captain with Cup' },
-        { src: 'assets/MWPI3556.JPG', caption: 'Medal Ceremony' },
-        { src: 'assets/hero-image.jpeg', caption: 'Team Group Photo' },
-        { src: 'assets/IMG_3562.JPG', caption: 'Champagne Shower' },
-        { src: 'assets/MWPI3556.JPG', caption: 'Coach with Trophy' },
-        { src: 'assets/hero-image.jpeg', caption: 'Final Wicket Celebration' },
-        { src: 'assets/IMG_3562.JPG', caption: 'Winning Run' }
-      ]
-    },
-    {
-      id: 'kpl-2024',
-      title: 'KPL 2024 Highlights',
-      coverImage: 'assets/DXBQ2771.JPG',
-      category: 'kpl',
-      images: [
-        { src: 'assets/DXBQ2771.JPG', caption: 'Opening Ceremony' },
-        { src: 'assets/NMUM0899.JPG', caption: 'Best Catch' },
-        { src: 'assets/default-player.jpeg', caption: 'Man of the Match' }
-      ]
-    },
-    {
-      id: 'team-photos',
-      title: 'Team Photos',
-      coverImage: 'assets/IUEF1539.JPG',
-      category: 'teams',
-      images: [
-        { src: 'assets/IUEF1539.JPG', caption: 'Full Squad' },
-        { src: 'assets/default-player.jpeg', caption: 'Batting lineup' }
-      ]
-    },
-    {
-      id: 'KPL-2026 RUNNER UP',
-      title: 'Winning Moments',
-      coverImage: 'assets/GJ2026_3.jpeg',
-      category: 'trophy',
-      images: [
-        { src: 'assets/GJ2026_1.jpeg', caption: 'Lifting the Trophy' },
-        { src: 'assets/GJ2026_2.jpeg', caption: 'Team Celebration' },
-        { src: 'assets/GJ2026_3.jpeg', caption: 'Victory Lap' },
-      ]
-    },
-  ];
-
-  // Flattened images for legacy support if needed, or helper
   get galleryImages() {
-    return this.galleryAlbums.flatMap(album => album.images);
+    return this.dynamicGallery().map(img => ({
+      src: img.url,
+      caption: img.Title || img.title
+    }));
+  }
+
+  get availableCategories() {
+    const images = this.dynamicGallery();
+    const categories = new Set(images.map(img => img.Category).filter(c => !!c));
+    return Array.from(categories);
+  }
+
+  setCategory(category: string) {
+    this.selectedCategory = category;
   }
 
   contactInfo = {
@@ -175,36 +104,112 @@ export class KkkWebsiteComponent implements OnInit {
   auctionList: any = [];
   isBrowser: boolean;
 
-  upcomingTournaments = [
-    {
-      tournament_name: 'Kattur Premier League 2025',
-      location: 'Kattur Ground',
-      start_datetime: new Date('2025-07-10T09:00:00'),
-    },
-    {
-      tournament_name: 'Corporate Cup 2025',
-      location: 'Trichy Sports Complex',
-      start_datetime: new Date('2025-08-05T10:00:00'),
-    }
-  ];
-
   constructor(
     private teamService: TeamsService,
     private playerService: PlayerService,
     private auctionSessionService: AuctionSessionService,
+    private settingsService: SettingsService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit() {
-    this.getAuctionList();
-    this.getTeamList();
-    this.getPlayerList();
-    if (this.isBrowser) {
-      this.startCountdown();
-      this.updateActiveSection();
+    console.log('KkkWebsiteComponent: Initializing...');
+    try {
+      this.loadAppSettings();
+      this.loadCarousel();
+      this.loadSponsors();
+      this.loadGallery();
+      this.getAuctionList();
+      this.getTeamList();
+      this.getPlayerList();
+      if (this.isBrowser) {
+        this.startCountdown();
+        this.updateActiveSection();
+      }
+    } catch (e) {
+      console.error('KkkWebsiteComponent: Error in ngOnInit', e);
     }
+    console.log('KkkWebsiteComponent: Initialization complete.');
+  }
+
+  loadAppSettings() {
+    this.settingsService.getAppSettings().subscribe({
+      next: (res: any) => {
+        if (!res) return;
+        const settings = res.data?.settings || res.data || res;
+
+        // Map logo URL
+        if (settings.logo && !settings.logo.startsWith('http') && !settings.logo.startsWith('assets')) {
+          settings.logoUrl = environment.apiUrl + settings.logo;
+        } else if (settings.logo) {
+          settings.logoUrl = settings.logo;
+        }
+
+        this.appSettings.set(settings || {});
+
+        if (settings) {
+          if (settings.facebook) this.contactInfo.facebook = settings.facebook;
+          if (settings.instagram) this.contactInfo.instagram = settings.instagram;
+          if (settings.twitter) this.contactInfo.twitter = settings.twitter;
+          if (settings.youtube) this.contactInfo.youtube = settings.youtube;
+        }
+      },
+      error: (err) => console.error('Error loading App Settings:', err)
+    });
+  }
+
+  loadCarousel() {
+    this.settingsService.getCarousel().subscribe({
+      next: (res: any) => {
+        const items = res?.data?.carousel || res || [];
+        this.carouselItems.set(Array.isArray(items) ? items.map((item: any) => ({
+          ...item,
+          title: item.Title || item.title || 'Kattur Premier League',
+          description: item.Description || item.description || 'The Battle of Champions',
+          imageUrl: (item.ImageURL || item.imageUrl) ?
+            ((item.ImageURL || item.imageUrl).startsWith('http') ? (item.ImageURL || item.imageUrl) : environment.apiUrl + (item.ImageURL || item.imageUrl)) :
+            'assets/MV_4.jpeg'
+        })) : []);
+      },
+      error: (err) => console.error('Error loading Carousel:', err)
+    });
+  }
+
+  loadSponsors() {
+    this.settingsService.getSponsors().subscribe({
+      next: (res: any) => {
+        const sponsors = res?.data?.sponsors || res?.data?.sponsorships || [];
+        this.dynamicSponsors.set(Array.isArray(sponsors) ? sponsors.map((s: any) => ({
+          ...s,
+          Name: s.Name || s.name || '',
+          Description: s.Description || s.description || '',
+          WebsiteURL: s.WebsiteURL || s.website || '#',
+          LogoURL: (s.LogoURL || s.logoUrl) ?
+            ((s.LogoURL || s.logoUrl).startsWith('http') ? (s.LogoURL || s.logoUrl) : environment.apiUrl + (s.LogoURL || s.logoUrl)) :
+            ''
+        })) : []);
+      },
+      error: (err) => console.error('Error loading Sponsors:', err)
+    });
+  }
+
+  loadGallery() {
+    this.settingsService.getGallery().subscribe({
+      next: (res: any) => {
+        const images = res?.data?.gallery || [];
+        this.dynamicGallery.set(Array.isArray(images) ? images.map((img: any) => ({
+          ...img,
+          Title: img.Title || img.title || '',
+          Category: img.Category || img.category || 'Other',
+          url: (img.ImageURL || img.imageUrl) ?
+            ((img.ImageURL || img.imageUrl).startsWith('http') ? (img.ImageURL || img.imageUrl) : environment.apiUrl + (img.ImageURL || img.imageUrl)) :
+            ''
+        })) : []);
+      },
+      error: (err) => console.error('Error loading Gallery:', err)
+    });
   }
 
   @HostListener('window:scroll', [])
@@ -220,14 +225,29 @@ export class KkkWebsiteComponent implements OnInit {
   getTeamList() {
     this.teamService.getAll().subscribe({
       next: (response: any) => {
-        this.teams.set(response?.data?.teams?.map((team: any) => ({
-          ...team,
-          LogoURL: team.Name === 'KKK Juniors' ? 'assets/teams/kkkjuniors.png'
-            : team.Name === '7 Star' ? 'assets/teams/sevenstar.png'
-              : team.Name === 'GJ Warriors' ? 'assets/teams/gjwarriors.png'
-                : team.Name.includes("XI Maverick Stricker's") ? 'assets/teams/maverickstrikers.png'
-                  : team.Name === 'Power Hitters' ? 'assets/teams/powerhitter.png' : ''
-        })) ?? []);
+        const teams = response?.data?.teams ?? [];
+        this.teams.set(teams.map((team: any) => {
+          let logo = team.LogoURL;
+          if (logo && !logo.startsWith('http') && !logo.startsWith('assets')) {
+            logo = environment.apiUrl + logo;
+          } else if (!logo) {
+            // Fallback for known team names if no logo exists in DB
+            logo = team.Name === 'KKK Juniors' ? 'assets/teams/kkkjuniors.png'
+              : team.Name === '7 Star' ? 'assets/teams/sevenstar.png'
+                : team.Name === 'GJ Warriors' ? 'assets/teams/gjwarriors.png'
+                  : team.Name.includes("XI Maverick Stricker's") ? 'assets/teams/maverickstrikers.png'
+                    : team.Name === 'Power Hitters' ? 'assets/teams/powerhitter.png' : 'assets/logo.jpeg';
+          }
+          return {
+            ...team,
+            LogoURL: logo,
+            Captain: team.Captain,
+            OwnerName: team.OwnerName,
+            Founded: team.Founded,
+            Location: team.Location,
+            Slogan: team.Slogan
+          };
+        }));
       },
       error: (error: any) => console.error('Error fetching Teams:', error)
     });
@@ -255,14 +275,15 @@ export class KkkWebsiteComponent implements OnInit {
   // --- Logic & Helpers ---
 
   getFilteredGallery() {
+    const images = this.dynamicGallery();
     if (this.selectedCategory === 'all') {
-      return this.galleryAlbums;
+      return images;
     }
-    return this.galleryAlbums.filter(album => album.category === this.selectedCategory);
+    return images.filter(img => img.Category === this.selectedCategory);
   }
 
   loadMoreImages() {
-    // simplified or removed for now as we show albums
+    // handled by pagination or infinite scroll in future
   }
 
   // --- Lightbox Logic ---
@@ -274,17 +295,27 @@ export class KkkWebsiteComponent implements OnInit {
     return this.currentLightboxImages()[this.currentLightboxIndex()];
   }
 
-  // Open lightbox with a specific album
-  openLightbox(album: Album) {
-    this.currentLightboxImages.set(album.images);
-    this.currentLightboxIndex.set(0); // Start from first image
+  // Open lightbox with dynamic image
+  openLightbox(image: any) {
+    const allImages = this.getFilteredGallery().map(img => ({
+      src: img.url,
+      caption: img.Title || img.title
+    }));
+    const index = allImages.findIndex(img => img.src === image.url);
+
+    this.currentLightboxImages.set(allImages);
+    this.currentLightboxIndex.set(index >= 0 ? index : 0);
     this.lightboxOpen.set(true);
-    document.body.style.overflow = 'hidden';
+    if (this.isBrowser) {
+      document.body.style.overflow = 'hidden';
+    }
   }
 
   closeLightbox() {
     this.lightboxOpen.set(false);
-    document.body.style.overflow = '';
+    if (this.isBrowser) {
+      document.body.style.overflow = '';
+    }
   }
 
   nextLightboxImage() {
@@ -398,13 +429,26 @@ export class KkkWebsiteComponent implements OnInit {
   }
 
   viewTeamDetails(team: Team) {
-    alert(team.Name);
+    const details = `
+🏆 ${team.Name}
+━━━━━━━━━━━━━━━━
+Captained by: ${team.Captain || 'TBD'}
+Coach: ${team.Coach || 'TBD'}
+Owner: ${team.OwnerName || 'Club Managed'}
+Founded: ${team.Founded || 'New Entry'}
+Location: ${team.Location || 'Local'}
+
+"${team.Slogan || 'Striving for Glory'}"
+
+Bio: ${team.Bio || 'A proud member of the Kattur Premier League.'}
+    `.trim();
+    alert(details);
   }
 
   updateActiveSection() {
     if (!this.isBrowser) return;
 
-    const sections = ['home', 'kpl', 'teams', 'live', 'gallery', 'contact'];
+    const sections = ['home', 'teams', 'sponsors', 'auction', 'fixtures', 'gallery', 'contact'];
     const scrollPosition = window.pageYOffset + 100;
 
     for (const section of sections) {

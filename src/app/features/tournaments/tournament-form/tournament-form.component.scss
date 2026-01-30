@@ -4,7 +4,7 @@
     min-height: 100vh;
 }
 
-.teams-form-container {
+.tournament-form-container {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -55,7 +55,7 @@
     padding-bottom: 1rem;
 
     i {
-        color: #3b82f6;
+        color: #f59e0b; // Gold/Orange for tournaments
     }
 }
 
@@ -70,6 +70,49 @@
     }
 }
 
+.team-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.team-checkbox-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover {
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
+    }
+
+    &.selected {
+        background: rgba(245, 158, 11, 0.05);
+        border-color: #f59e0b;
+
+        .team-name {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+    }
+
+    .team-logo-sm {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+
+    .team-name {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+}
+
 .custom-textarea {
     .form-control {
         border: 2px solid #e2e8f0;
@@ -80,8 +123,8 @@
 
         &:focus {
             background: white;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
         }
     }
 }
@@ -95,7 +138,6 @@
     padding-bottom: 4rem;
 }
 
-// Animations
 .animate-fade {
     animation: fadeIn 0.6s ease-out;
 }
@@ -113,18 +155,34 @@
 }
 
 ::ng-deep {
-    app-input {
+
+    app-input,
+    app-select,
+    app-datepicker,
+    app-textarea {
         .form-label {
             font-size: 0.85rem !important;
             color: #64748b !important;
             margin-bottom: 0.5rem !important;
+            font-weight: 600 !important;
         }
 
-        .form-control {
+        .form-control,
+        .form-select {
             height: 50px !important;
             border-radius: 12px !important;
             border-width: 2px !important;
             font-weight: 500 !important;
+            border-color: #e2e880;
+
+            &:focus {
+                border-color: #f59e0b !important;
+                box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+            }
+        }
+
+        textarea.form-control {
+            height: auto !important;
         }
     }
 }

@@ -1,0 +1,63 @@
+.teams-list-container {
+    .page-title {
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+}
+
+.table-card {
+    min-height: 500px;
+}
+
+.animate-fade {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+::ng-deep {
+    .data-table-container {
+        border: none !important;
+
+        .table {
+            margin-bottom: 0;
+
+            thead th {
+                background: #f8fafc;
+                border-top: none;
+                color: #64748b;
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+                padding: 1rem 1.5rem;
+            }
+
+            tbody tr {
+                &:hover {
+                    background-color: #f8fafc;
+                }
+
+                td {
+                    padding: 1rem 1.5rem;
+                    vertical-align: middle;
+                    color: #475569;
+                    font-weight: 500;
+                    border-bottom: 1px solid #f1f5f9;
+                }
+            }
+        }
+    }
+}

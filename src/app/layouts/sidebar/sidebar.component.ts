@@ -20,13 +20,12 @@ export class SidebarComponent {
       label: 'Overview',
       items: [
         { label: 'Dashboard', route: '/kkk/dashboard', icon: 'dashboard' },
-        { label: 'Players', route: '/kkk/players-list', icon: 'group' },
-        { label: 'Teams', route: '/kkk/teams-list', icon: 'group' },
-        // { label: 'Sponsers', route: '/kkk/sponsers-list', icon: 'settings' },
-        { label: 'Auction Session', route: '/kkk/auction-session-list', icon: 'person' },
-        { label: 'Auction Room', route: '/kkk/auction-room', icon: 'settings' },
-        { label: 'Auction Dashboard', route: '/kkk/team-dashboard', icon: 'settings' },
-        { label: 'Sample page', route: '/kkk/sample-page', icon: 'settings' },
+        { label: 'Players', route: '/kkk/players-list', icon: 'people' },
+        { label: 'Teams', route: '/kkk/teams-list', icon: 'shield' },
+        { label: 'Tournaments', route: '/kkk/tournaments-list', icon: 'emoji_events' },
+        { label: 'Matches', route: '/kkk/match-list', icon: 'sports_cricket' },
+        { label: 'Auction Session', route: '/kkk/auction-session-list', icon: 'gavel' },
+        { label: 'Auction Room', route: '/kkk/auction-room', icon: 'live_tv' },
         { label: 'Settings', route: '/kkk/settings', icon: 'settings' },
       ]
     }

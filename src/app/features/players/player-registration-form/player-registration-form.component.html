@@ -1,73 +1,163 @@
-<div class="container">
+<div class="registration-container animate-fade">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="row g-3">
-
-            <!-- Profile -->
-            <div class="col-md-4 text-center">
-                <div class="profile-upload">
-                    <app-image-upload [control]="form.get('PhotoURL')!"
-                        [defaultUrl]="form.get('PhotoURL')!.value"></app-image-upload>
-                </div>
-            </div>
-
-            <!-- Fields -->
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <app-input label="Full Name" [control]="form.get('Name')!" placeholder="Enter full name"
-                            type="text" />
+        <div class="form-grid">
+            <!-- Left Column: Photo & Quick Info -->
+            <div class="sidebar-section">
+                <div class="premium-card logo-card sticky-top">
+                    <h5 class="section-title"><i class="bi bi-camera me-2"></i>Profile Image</h5>
+                    <div class="logo-upload-wrapper">
+                        <app-image-upload [control]="form.get('PhotoURL')!"
+                            [defaultUrl]="form.get('PhotoURL')!.value"></app-image-upload>
+                        <p class="small text-muted mt-3">Professional headshot recommended (Max 2MB)</p>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <app-input label="Father Name" [control]="form.get('FatherName')!"
-                            placeholder="Enter your Father name" type="text"></app-input>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-mobile-input label="Mobile Number" [control]="form.get('Mobile')!"
-                            placeholder="Enter mobile" type="text"></app-mobile-input>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-email label="Email" [control]="form.get('Email')!" placeholder="Enter email"
-                            type="email"></app-email>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-datepicker label="Date of Birth" [control]="form.get('DOB')!"></app-datepicker>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-select label="Role" [control]="form.get('Role')!" [options]="roles"></app-select>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-input label="Batting Style" [control]="form.get('BattingStyle')!"
-                            placeholder="e.g. Right-hand bat" type="text"></app-input>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <app-input label="Bowling Style" [control]="form.get('BowlingStyle')!"
-                            placeholder="e.g. Left-arm spin" type="text"></app-input>
-                    </div>
-
-                    <div class="col-md-12 mb-3">
-                        <app-textarea label="Achievements" [control]="form.get('Notes')!"
-                            placeholder="Mention any achievements"></app-textarea>
+                    <div class="mt-4 text-start">
+                        <app-input label="Nickname" [control]="form.get('Nickname')!" placeholder="e.g. Sunny"
+                            type="text" icon="bi-person-heart" />
+                        <app-input label="Age" [control]="form.get('Age')!" placeholder="Auto-calculated" type="number"
+                            [readonly]="true" icon="bi-clock-history" />
                     </div>
                 </div>
             </div>
 
-            <!-- Submit -->
-            <div class="col-12 d-flex justify-content-center gap-3 mt-3">
-                <app-button [label]="isEdit ? 'Update' : 'Save'" type="submit">
-                </app-button>
+            <!-- Right Column: Registration Details -->
+            <div class="main-content-section">
+                <!-- Personal Info -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-person-circle me-2"></i>Personal Details</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <app-input label="Full Name *" [control]="form.get('Name')!" placeholder="First & Last Name"
+                                type="text" icon="bi-person" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Father's Name *" [control]="form.get('FatherName')!"
+                                placeholder="Father's full name" type="text" icon="bi-person-badge" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-datepicker label="Date of Birth *" [control]="form.get('DOB')!"></app-datepicker>
+                        </div>
+                        <div class="col-md-6">
+                            <app-mobile-input label="Mobile Number *" [control]="form.get('Mobile')!"
+                                placeholder="Primary Contact" type="text"></app-mobile-input>
+                        </div>
+                        <div class="col-md-6">
+                            <app-email label="Email Address" [control]="form.get('Email')!" placeholder="Primary email"
+                                type="email"></app-email>
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Emergency Contact" [control]="form.get('EmergencyContact')!"
+                                placeholder="Relative/Friend Mobile" type="text" icon="bi-telephone-plus" />
+                        </div>
+                        <div class="col-12">
+                            <app-textarea label="Residential Address" [control]="form.get('Address')!"
+                                placeholder="Complete address for records" [rows]="2"></app-textarea>
+                        </div>
+                    </div>
+                </div>
 
-                <app-button label="Close" class="btn-secondary" (actionClick)="close()">
-                </app-button>
+                <!-- Cricket Profile -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-trophy me-2"></i>Cricket Profile</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <app-select label="Primary Role *" [control]="form.get('Role')!"
+                                [options]="roles"></app-select>
+                        </div>
+                        <div class="col-md-6">
+                            <app-select label="Batting Style *" [control]="form.get('BattingStyle')!"
+                                [options]="battingStyles"></app-select>
+                        </div>
+                        <div class="col-md-6">
+                            <app-select label="Bowling Style" [control]="form.get('BowlingStyle')!"
+                                [options]="bowlingStyles"></app-select>
+                        </div>
+                        <div class="col-md-6">
+                            <app-select label="Batting Position" [control]="form.get('BattingPosition')!"
+                                [options]="battingPositions"></app-select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold small text-uppercase opacity-75 mb-3">Special
+                                Skills</label>
+                            <div class="d-flex flex-wrap gap-4 px-2">
+                                <div class="form-check custom-check">
+                                    <input class="form-check-input" type="checkbox" formControlName="CanKeep"
+                                        id="canKeep">
+                                    <label class="form-check-label fw-semibold" for="canKeep">Wicket Keeper</label>
+                                </div>
+                                <div class="form-check custom-check">
+                                    <input class="form-check-input" type="checkbox" formControlName="CanCaptain"
+                                        id="canCaptain">
+                                    <label class="form-check-label fw-semibold" for="canCaptain">Captaincy
+                                        Potential</label>
+                                </div>
+                                <div class="form-check custom-check">
+                                    <input class="form-check-input" type="checkbox" formControlName="CanField"
+                                        id="canField">
+                                    <label class="form-check-label fw-semibold" for="canField">Excellent Fielder</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bio & Achievements -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-award me-2"></i>Bio & Career</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <app-input label="Experience (Years)" [control]="form.get('Experience')!"
+                                placeholder="e.g. 10" type="number" icon="bi-briefcase" />
+                        </div>
+                        <div class="col-md-8">
+                            <app-input label="Previous Club/Team" [control]="form.get('PreviousTeam')!"
+                                placeholder="Last represented team" type="text" icon="bi-buildings" />
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group custom-textarea">
+                                <label class="form-label fw-bold small text-uppercase opacity-75">About the Player /
+                                    Achievements</label>
+                                <textarea formControlName="Bio" class="form-control" rows="4"
+                                    placeholder="Mention significant milestones, tournament wins, etc..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physical Stats -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-heart-pulse me-2"></i>Physical Stats & Kit</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <app-input label="Height (cm)" [control]="form.get('Height')!" placeholder="e.g. 180"
+                                type="number" icon="bi-rulers" />
+                        </div>
+                        <div class="col-md-4">
+                            <app-input label="Weight (kg)" [control]="form.get('Weight')!" placeholder="e.g. 75"
+                                type="number" icon="bi-speedometer2" />
+                        </div>
+                        <div class="col-md-4">
+                            <app-select label="Jersey Size" [control]="form.get('JerseySize')!"
+                                [options]="jerseySizes"></app-select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Notes -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-sticky me-2"></i>Administrative Notes</h5>
+                    <app-textarea label="Internal Notes" [control]="form.get('Notes')!"
+                        placeholder="Any internal observation..." [rows]="2"></app-textarea>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="actions-footer mt-5 d-flex gap-3">
+                    <app-button [label]="isEdit ? 'Update Profile' : 'Register Player'" type="submit"
+                        class="w-100 flex-grow-1" [variant]="'primary'"></app-button>
+                    <button type="button" class="btn btn-outline-secondary px-5" (click)="close()">Cancel</button>
+                </div>
             </div>
-
         </div>
-
     </form>
 </div>

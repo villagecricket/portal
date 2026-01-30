@@ -10,6 +10,10 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'polling',
+        loadComponent: () => import('@features/polling/polling-page.component').then(m => m.PollingPageComponent),
+    },
+    {
         path: '',
         component: AuthLayoutComponent,
         children: [
@@ -77,6 +81,52 @@ export const routes: Routes = [
                 path: 'team-dashboard',
                 data: { breadcrumb: 'Team Dashboard' },
                 loadComponent: () => import('@features/auction/team/team-dashboard/team-dashboard.component').then(m => m.TeamDashboardComponent),
+            },
+
+            // --- Settings & Gallery ---
+            {
+                path: 'settings',
+                data: { breadcrumb: 'Settings' },
+                loadComponent: () => import('@features/settings/settings.component').then(m => m.SettingsComponent),
+            },
+            {
+                path: 'gallery',
+                data: { breadcrumb: 'Gallery' },
+                loadComponent: () => import('@features/gallery/gallery.component').then(m => m.GalleryComponent),
+            },
+
+            // --- Tournament Management ---
+            {
+                path: 'tournaments-list',
+                data: { breadcrumb: 'Tournaments' },
+                loadComponent: () => import('@features/tournaments/tournaments-list/tournaments-list.component').then(m => m.TournamentsListComponent),
+            },
+            {
+                path: 'tournament-form',
+                data: { breadcrumb: 'New Tournament' },
+                loadComponent: () => import('@features/tournaments/tournament-form/tournament-form.component').then(m => m.TournamentFormComponent),
+            },
+            {
+                path: 'tournament-details/:id',
+                data: { breadcrumb: 'Tournament Dashboard' },
+                loadComponent: () => import('@features/tournaments/tournament-dashboard/tournament-dashboard.component').then(m => m.TournamentDashboardComponent),
+            },
+
+            // --- Match Management ---
+            {
+                path: 'match-list',
+                data: { breadcrumb: 'Matches' },
+                loadComponent: () => import('@features/matches/match-list/match-list.component').then(m => m.MatchListComponent),
+            },
+            {
+                path: 'match-form',
+                data: { breadcrumb: 'New Match' },
+                loadComponent: () => import('@features/matches/match-form/match-form.component').then(m => m.MatchFormComponent),
+            },
+            {
+                path: 'scorecard/:id',
+                data: { breadcrumb: 'Live Scorecard' },
+                loadComponent: () => import('@features/matches/scorecard/scorecard.component').then(m => m.ScorecardComponent),
             },
 
             // --- Other ---

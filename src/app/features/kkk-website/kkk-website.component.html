@@ -1,9 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
   <div class="container">
     <a class="navbar-brand fw-bold d-flex align-items-center cursor-pointer" (click)="scrollTo('home')">
-      <img src="assets/logo.jpeg" alt="Logo" height="45" class="me-2 rounded-circle border border-2 border-warning">
+      <img [src]="appSettings().logoUrl || 'assets/logo.jpeg'" alt="Logo" height="45"
+        class="me-2 rounded-circle border border-2 border-warning">
       <div>
-        <span class="d-block fs-4 tracking-wider">KATTUR CRICKET CLUB</span>
+        <span class="d-block fs-4 tracking-wider text-uppercase">{{ appSettings().appName || 'KATTUR CRICKET CLUB'
+          }}</span>
       </div>
     </a>
 
@@ -13,12 +15,36 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto gap-3">
-        <li class="nav-item"
-          *ngFor="let item of ['Home', 'Teams', 'Sponsors', 'Auction', 'Fixtures', 'Gallery', 'Contact']">
-          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === item.toLowerCase()"
-            (click)="scrollTo(item.toLowerCase())" style="cursor: pointer;">
-            {{item}}
-          </a>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'home'"
+            (click)="scrollTo('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'teams'"
+            (click)="scrollTo('teams')">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'sponsors'"
+            (click)="scrollTo('sponsors')">Sponsors</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'auction'"
+            (click)="scrollTo('auction')">Auction</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'fixtures'"
+            (click)="scrollTo('fixtures')">Fixtures</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'gallery'"
+            (click)="scrollTo('gallery')">Gallery</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" routerLink="/polling">Polls</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" [class.active]="activeSection() === 'contact'"
+            (click)="scrollTo('contact')">Contact</a>
         </li>
       </ul>
     </div>
@@ -28,74 +54,79 @@
 <!-- Hero Section -->
 <section id="home" class="hero-section position-relative">
   <div id="heroCarousel" class="carousel slide fade-carousel" data-bs-ride="carousel" data-bs-interval="5000">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    <div class="carousel-indicators" *ngIf="carouselItems().length > 1">
+      <button type="button" data-bs-target="#heroCarousel" *ngFor="let item of carouselItems(); let i = index"
+        [attr.data-bs-slide-to]="i" [class.active]="i === 0"></button>
     </div>
 
     <div class="carousel-inner">
-      <div class="carousel-item active">
+      <!-- Dynamic Slides -->
+      <div class="carousel-item" *ngFor="let item of carouselItems(); let i = index" [class.active]="i === 0">
         <div class="overlay"></div>
-        <img src="assets/GJ2026_1.jpeg" class="d-block w-100 vh-100" alt="Cricket Match" style="object-fit: cover;">
+        <img [src]="item.imageUrl" class="d-block w-100 vh-100" [alt]="item.alt" style="object-fit: cover;">
+        <div class="carousel-caption d-none d-md-block slide-up">
+          <h1 class="display-1 fw-bold text-uppercase gradient-text">{{ item.title }}</h1>
+          <p class="lead fs-3 mb-4">{{ item.description }}</p>
+          <button class="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold glow-effect"
+            (click)="scrollTo('auction')">Explore More</button>
+        </div>
+      </div>
+
+      <!-- Fallback Slide if empty -->
+      <div class="carousel-item active" *ngIf="carouselItems().length === 0">
+        <div class="overlay"></div>
+        <img src="assets/MV_4.jpeg" class="d-block w-100 vh-100" alt="Cricket Match" style="object-fit: cover;">
         <div class="carousel-caption d-none d-md-block slide-up">
           <h1 class="display-1 fw-bold text-uppercase gradient-text">Kattur Premier League</h1>
           <p class="lead fs-3 mb-4">The Battle of Champions Returns</p>
           <button class="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold glow-effect"
-            (click)="scrollTo('auction')">Register Now</button>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <div class="overlay"></div>
-        <img src="assets/NMUM0899.JPG" class="d-block w-100 vh-100" style="object-fit: cover;">
-        <div class="carousel-caption d-none d-md-block slide-up">
-          <h1 class="display-1 fw-bold text-uppercase">Glory Awaits</h1>
-          <p class="lead fs-3">Season 5 - Bigger, Better, bolder</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <div class="overlay"></div>
-        <img src="assets/IUEF1539.JPG" class="d-block w-100 vh-100" style="object-fit: cover;">
-        <div class="carousel-caption d-none d-md-block slide-up">
-          <h1 class="display-1 fw-bold text-uppercase">₹1 Lakh Prize Pool</h1>
-          <p class="lead fs-3">Are you ready to lift the trophy?</p>
+            (click)="scrollTo('auction')">Explore More</button>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+
 <!-- KPL 2026 Grid Section -->
-<section class="py-5 bg-dark position-relative overflow-hidden">
+<section id="fixtures" class="py-5 bg-dark position-relative overflow-hidden">
   <div class="container position-relative z-2">
     <div class="row align-items-center">
       <div class="col-lg-4 mb-4 mb-lg-0">
-        <h2 class="display-4 fw-bold text-white mb-3">KPL <span class="text-warning">2026</span></h2>
-        <p class="text-white-50 fs-5 mb-4">Experience the thrill. Witness the passion. Join the legacy.</p>
+        <h2 class="display-4 fw-bold text-white mb-3">{{ appSettings().appName || 'KPL' }} <span
+            class="text-warning">2026</span></h2>
+        <p class="text-white-50 fs-5 mb-4">{{ appSettings().appDescription || 'Experience the thrill. Witness the
+          passion. Join the legacy.' }}</p>
         <div class="d-flex gap-3">
           <div class="stat-box p-3 bg-white bg-opacity-10 rounded text-center backdrop-blur">
-            <h3 class="fw-bold text-warning mb-0">5</h3>
+            <h3 class="fw-bold text-warning mb-0">{{ (teams() || []).length }}</h3>
             <small class="text-white text-uppercase">Teams</small>
           </div>
           <div class="stat-box p-3 bg-white bg-opacity-10 rounded text-center backdrop-blur">
-            <h3 class="fw-bold text-warning mb-0">50+</h3>
+            <h3 class="fw-bold text-warning mb-0">{{ (players || []).length || '50+' }}</h3>
             <small class="text-white text-uppercase">Players</small>
           </div>
         </div>
       </div>
       <div class="col-lg-8">
         <div class="image-grid">
-          <div class="grid-item" *ngFor="let img of gridImages; let i = index" [class.large]="i === 0">
-            <img [src]="img" class="img-fluid rounded shadow-lg hover-zoom" alt="KPL Moment">
-          </div>
+          <!-- Show first 6 images from dynamic gallery or fallback -->
+          <ng-container *ngIf="dynamicGallery().length > 0; else fallbackGrid">
+            <div class="grid-item" *ngFor="let img of dynamicGallery().slice(0, 6); let i = index"
+              [class.large]="i === 0">
+              <img [src]="img.url" class="img-fluid rounded shadow-lg hover-zoom" [alt]="img.title">
+            </div>
+          </ng-container>
+          <ng-template #fallbackGrid>
+            <div class="grid-item" *ngFor="let img of gridImages; let i = index" [class.large]="i === 0">
+              <img [src]="img" class="img-fluid rounded shadow-lg hover-zoom" alt="KPL Moment">
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 
 <!-- Teams Section (Horizontal Scroll) -->
 <section id="teams" class="py-5 section-gradient">
@@ -124,33 +155,16 @@
           </div>
           <div class="card-body text-center">
             <h4 class="fw-bold mb-1">{{team.Name}}</h4>
-            <span class="badge bg-warning text-dark mb-3 rounded-pill px-3">Season 2026</span>
+            <p class="small text-muted mb-2 fst-italic" *ngIf="team.Slogan">"{{team.Slogan}}"</p>
+            <div class="team-meta mb-3">
+              <span class="badge bg-warning text-dark rounded-pill px-3 me-1">Season 2026</span>
+              <span class="badge bg-dark text-white rounded-pill px-3" *ngIf="team.Captain">Capt:
+                {{team.Captain}}</span>
+            </div>
             <hr class="opacity-25">
-            <button class="btn btn-link text-decoration-none fw-bold" (click)="viewTeamDetails(team)">View Details <i
-                class="bi bi-arrow-right"></i></button>
+            <button class="btn btn-link text-decoration-none fw-bold" (click)="viewTeamDetails(team)">View Team Profile
+              <i class="bi bi-arrow-right"></i></button>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Sponsors Section (Horizontal Scroll) -->
-<section id="sponsors" class="py-5 bg-white">
-  <div class="container">
-    <div class="text-center mb-5">
-      <span class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill">Partners</span>
-      <h2 class="fw-bold mb-3">Our Sponsors</h2>
-    </div>
-
-    <div class="position-relative">
-      <div id="sponsors-scroll" class="d-flex align-items-center gap-5 overflow-auto py-4 no-scrollbar container-fluid"
-        style="scroll-behavior: smooth;">
-        <div class="sponsor-item text-center flex-shrink-0" *ngFor="let sponsor of sponsorsList"
-          style="min-width: 150px; opacity: 0.7; transition: all 0.3s;">
-          <img [src]="sponsor.logo" class="img-fluid mb-2 grayscale-hover" style="height: 60px; object-fit: contain;">
-          <h6 class="fw-bold text-dark mt-2">{{sponsor.name}}</h6>
-          <small class="text-muted d-block">{{sponsor.desc}}</small>
         </div>
       </div>
     </div>
@@ -405,43 +419,92 @@
   </div>
 </section>
 
-<!-- Gallery Section -->
-<section id="gallery" class="py-5 bg-dark text-white">
+<!-- Sponsors Section (Horizontal Scroll) -->
+<section id="sponsors" class="py-5 bg-white">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold text-warning">Gallery</h2>
-      <p class="text-white-50">Frozen moments of pure passion</p>
+      <span class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill">Partners</span>
+      <h2 class="fw-bold mb-3">Our Sponsors</h2>
     </div>
 
-    <div class="row g-2">
-      <div class="col-md-3 col-6" *ngFor="let album of getFilteredGallery()">
-        <div class="gallery-item position-relative overflow-hidden rounded cursor-pointer"
-          (click)="openLightbox(album)">
-          <div class="ratio ratio-1x1">
-            <img [src]="album.coverImage" class="img-fluid w-100 h-100" style="object-fit: cover;">
-          </div>
-          <div class="overlay d-flex flex-column align-items-center justify-content-center text-center p-3">
-            <h5 class="text-warning mb-1">{{album.title}}</h5>
-            <small class="text-white">{{album.images.length}} Photos</small>
-          </div>
+    <div class="position-relative">
+      <div id="sponsors-scroll" class="d-flex align-items-center gap-5 overflow-auto py-4 no-scrollbar container-fluid"
+        style="scroll-behavior: smooth;">
+        <div class="sponsor-item text-center flex-shrink-0" *ngFor="let sponsor of dynamicSponsors()"
+          style="min-width: 150px; opacity: 0.7; transition: all 0.3s;">
+          <a [href]="sponsor.WebsiteURL" target="_blank" class="text-decoration-none">
+            <img [src]="sponsor.LogoURL" class="img-fluid mb-2 grayscale-hover"
+              style="height: 60px; object-fit: contain;">
+            <h6 class="fw-bold text-dark mt-2">{{sponsor.Name}}</h6>
+            <small class="text-muted d-block">{{sponsor.Description}}</small>
+          </a>
+        </div>
+        <!-- Fallback if no sponsors -->
+        <div class="text-center w-100 py-4 text-muted" *ngIf="dynamicSponsors().length === 0">
+          <em>Partnering with the community...</em>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- Gallery Section -->
+<section id="gallery" class="py-5 bg-dark text-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold text-warning">Gallery</h2>
+      <p class="text-white-50">Frozen moments of pure passion</p>
+
+      <!-- Dynamic Category Filters -->
+      <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+        <button class="filter-btn" [class.active]="selectedCategory === 'all'" (click)="setCategory('all')">
+          All
+        </button>
+        <button class="filter-btn" *ngFor="let cat of availableCategories" [class.active]="selectedCategory === cat"
+          (click)="setCategory(cat)">
+          {{ cat }}
+        </button>
+      </div>
+    </div>
+
+    <div class="row g-2">
+      <div class="col-md-3 col-6" *ngFor="let img of getFilteredGallery()">
+        <div class="gallery-item position-relative overflow-hidden rounded cursor-pointer" (click)="openLightbox(img)">
+          <div class="ratio ratio-1x1">
+            <img [src]="img.url" class="img-fluid w-100 h-100" style="object-fit: cover;">
+          </div>
+          <div class="overlay d-flex flex-column align-items-center justify-content-center text-center p-3">
+            <h5 class="text-warning mb-1">{{img.Title}}</h5>
+            <small class="text-white">{{img.Category}}</small>
+          </div>
+        </div>
+      </div>
+      <!-- Fallback empty state -->
+      <div class="col-12 text-center py-5" *ngIf="dynamicGallery().length === 0">
+        <p class="text-white-50">No photos available in the gallery yet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Footer -->
-<footer class="bg-black text-white py-5 section-footer">
+<!-- Footer -->
+<footer id="contact" class="bg-black text-white py-5 section-footer">
   <div class="container">
     <div class="row g-4">
       <div class="col-md-4">
-        <h4 class="fw-bold text-warning mb-4">KKK</h4>
-        <p class="text-white-50 mb-4">Kattur Cricket Club has been the heart of local cricket since 2021. We believe in
-          fair play, community spirit, and nurturing young talent.</p>
+        <h4 class="fw-bold text-warning mb-4">{{ appSettings().appName || 'KKK' }}</h4>
+        <p class="text-white-50 mb-4">{{ appSettings().appDescription || 'Kattur Cricket Club has been the heart of
+          local cricket since 2021. We believe in fair play, community spirit, and nurturing young talent.' }}</p>
         <div class="d-flex gap-3 social-links">
-          <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+          <a *ngIf="appSettings().facebook" [href]="appSettings().facebook" target="_blank" class="text-white"><i
+              class="bi bi-facebook"></i></a>
+          <a *ngIf="appSettings().instagram" [href]="appSettings().instagram" target="_blank" class="text-white"><i
+              class="bi bi-instagram"></i></a>
+          <a *ngIf="appSettings().twitter" [href]="appSettings().twitter" target="_blank" class="text-white"><i
+              class="bi bi-twitter"></i></a>
+          <a *ngIf="appSettings().youtube" [href]="appSettings().youtube" target="_blank" class="text-white"><i
+              class="bi bi-youtube"></i></a>
         </div>
       </div>
       <div class="col-md-2 offset-md-1">
@@ -465,8 +528,7 @@
     </div>
     <hr class="border-secondary my-5">
     <div class="text-center text-white-50">
-      <small>&copy; 2026 Kattur Premier League. Designed with <i class="bi bi-heart-fill text-danger"></i> for
-        Cricket.</small>
+      <small>&copy; 2026 {{ appSettings().appName || 'Kattur Premier League' }}. All rights reserved.</small>
     </div>
   </div>
 </footer>
@@ -481,28 +543,19 @@
 <div class="lightbox-overlay" *ngIf="lightboxOpen()" (click)="closeLightbox()">
   <div class="lightbox-content position-relative d-flex align-items-center justify-content-center h-100 w-100"
     (click)="$event.stopPropagation()">
-
-    <!-- Close Button -->
     <button class="btn btn-close-white btn-lg position-absolute top-0 end-0 m-4 z-3" (click)="closeLightbox()"></button>
-
-    <!-- Navigation -->
     <button class="btn btn-nav prev-btn" (click)="prevLightboxImage()">
       <i class="bi bi-chevron-left display-4 text-white"></i>
     </button>
-
     <button class="btn btn-nav next-btn" (click)="nextLightboxImage()">
       <i class="bi bi-chevron-right display-4 text-white"></i>
     </button>
-
-    <!-- Image Container -->
     <div class="text-center position-relative">
       <img [src]="currentLightboxImage?.src" class="img-fluid lightbox-img rounded shadow-lg"
         [alt]="currentLightboxImage?.caption">
       <div class="mt-3 text-white">
         <h3 class="fw-bold text-warning">{{currentLightboxImage?.caption}}</h3>
-        <!-- Optional: Add index or just caption -->
       </div>
     </div>
-
   </div>
 </div>

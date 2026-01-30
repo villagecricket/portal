@@ -1,0 +1,235 @@
+<div class="gallery-container">
+    <!-- Header -->
+    <div class="gallery-header">
+        <div class="header-content">
+            <h1 class="gallery-title">📸 Photo Gallery</h1>
+            <p class="gallery-subtitle">Explore our collection of memorable moments</p>
+        </div>
+
+        <!-- View Mode Switcher -->
+        <div class="view-mode-switcher">
+            <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')"
+                title="Grid View">
+                ⊞
+            </button>
+            <button class="view-btn" [class.active]="viewMode() === 'masonry'" (click)="setViewMode('masonry')"
+                title="Masonry View">
+                ⊡
+            </button>
+            <button class="view-btn" [class.active]="viewMode() === 'album'" (click)="setViewMode('album')"
+                title="Album View">
+                📁
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="gallery-controls">
+        <div class="search-box">
+            <input type="text" placeholder="Search photos, tags, or photographer..." [value]="searchQuery()"
+                (input)="searchQuery.set($any($event.target).value); currentPage.set(1)">
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="filter-controls">
+            <select class="sort-select" [value]="sortBy()" (change)="setSortBy($any($event.target).value)">
+                <option value="date">Latest First</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="popular">Most Popular</option>
+            </select>
+
+            <button class="btn-clear-filters" *ngIf="selectedCategory() !== 'All' || searchQuery()"
+                (click)="clearFilters()">
+                ✕ Clear Filters
+            </button>
+        </div>
+
+        <div class="selection-info" *ngIf="selectedImages().length > 0">
+            <span>{{ selectedImages().length }} selected</span>
+            <button class="btn-deselect" (click)="deselectAllImages()">Deselect All</button>
+        </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+        <button *ngFor="let category of categories" class="category-tab"
+            [class.active]="selectedCategory() === category" (click)="setCategory(category)">
+            {{ category }}
+        </button>
+    </div>
+
+    <!-- Gallery Content -->
+    <div class="gallery-content">
+
+        <!-- GRID VIEW -->
+        <div class="gallery-grid" *ngIf="viewMode() === 'grid'">
+            <div class="gallery-card" *ngFor="let image of getPaginatedImages()"
+                [class.selected]="selectedImages().includes(image.id)" (click)="openLightbox(image)">
+                <div class="card-image">
+                    <img [src]="image.thumbnail" [alt]="image.caption" loading="lazy">
+                    <div class="image-overlay">
+                        <div class="overlay-actions">
+                            <button class="action-btn" (click)="likeImage(image); $event.stopPropagation()"
+                                title="Like">
+                                ❤️ {{ image.likes }}
+                            </button>
+                            <button class="action-btn" (click)="downloadImage(image); $event.stopPropagation()"
+                                title="Download">
+                                ⬇️
+                            </button>
+                            <button class="action-btn" (click)="shareImage(image); $event.stopPropagation()"
+                                title="Share">
+                                🔗
+                            </button>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" [checked]="selectedImages().includes(image.id)"
+                                (click)="toggleImageSelection(image.id); $event.stopPropagation()">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3>{{ image.caption }}</h3>
+                    <div class="card-meta">
+                        <span class="category-badge">{{ image.category }}</span>
+                        <span class="date">{{ image.uploadDate | date:'MMM d, y' }}</span>
+                    </div>
+                    <div class="card-tags" *ngIf="image.tags && image.tags.length > 0">
+                        <span class="tag" *ngFor="let tag of image.tags">#{{ tag }}</span>
+                    </div>
+                    <p class="photographer" *ngIf="image.photographer">
+                        📷 {{ image.photographer }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MASONRY VIEW -->
+        <div class="gallery-masonry" *ngIf="viewMode() === 'masonry'">
+            <div class="masonry-item" *ngFor="let image of getPaginatedImages()" (click)="openLightbox(image)">
+                <img [src]="image.thumbnail" [alt]="image.caption" loading="lazy">
+                <div class="masonry-overlay">
+                    <h4>{{ image.caption }}</h4>
+                    <div class="masonry-meta">
+                        <span>❤️ {{ image.likes }}</span>
+                        <span>{{ image.uploadDate | date:'short' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALBUM VIEW -->
+        <div class="album-grid" *ngIf="viewMode() === 'album'">
+            <div class="album-card" *ngFor="let album of getFilteredAlbums()" (click)="openAlbumLightbox(album)">
+                <div class="album-cover">
+                    <img [src]="album.coverImage" [alt]="album.title">
+                    <div class="album-overlay">
+                        <div class="album-count">{{ album.images.length }} photos</div>
+                    </div>
+                </div>
+                <div class="album-info">
+                    <h3>{{ album.title }}</h3>
+                    <p>{{ album.description }}</p>
+                    <div class="album-meta">
+                        <span class="category-badge">{{ album.category }}</span>
+                        <span class="date">{{ album.createdDate | date:'MMM d, y' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="getFilteredImages().length === 0 && viewMode() !== 'album'">
+            <div class="empty-icon">📷</div>
+            <h3>No Photos Found</h3>
+            <p>Try adjusting your filters or search query</p>
+            <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
+        </div>
+
+        <div class="empty-state" *ngIf="getFilteredAlbums().length === 0 && viewMode() === 'album'">
+            <div class="empty-icon">📁</div>
+            <h3>No Albums Found</h3>
+            <p>Try adjusting your filters or search query</p>
+            <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="getTotalPages() > 1 && viewMode() !== 'album'">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
+            ‹ Previous
+        </button>
+
+        <div class="page-numbers">
+            <button *ngFor="let page of [].constructor(getTotalPages()); let i = index" class="page-number"
+                [class.active]="currentPage() === i + 1" (click)="goToPage(i + 1)">
+                {{ i + 1 }}
+            </button>
+        </div>
+
+        <button class="page-btn" [disabled]="currentPage() === getTotalPages()" (click)="nextPage()">
+            Next ›
+        </button>
+    </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" *ngIf="lightboxOpen()" (click)="closeLightbox()">
+    <div class="lightbox-container" (click)="$event.stopPropagation()">
+        <!-- Close Button -->
+        <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+
+        <!-- Navigation -->
+        <button class="lightbox-nav prev" (click)="prevImage()">‹</button>
+        <button class="lightbox-nav next" (click)="nextImage()">›</button>
+
+        <!-- Image -->
+        <div class="lightbox-image" *ngIf="getCurrentImage() as image">
+            <img [src]="image.src" [alt]="image.caption">
+        </div>
+
+        <!-- Info Panel -->
+        <div class="lightbox-info" *ngIf="getCurrentImage() as image">
+            <div class="info-header">
+                <h2>{{ image.caption }}</h2>
+                <div class="info-actions">
+                    <button class="info-btn" (click)="likeImage(image)">
+                        ❤️ {{ image.likes }}
+                    </button>
+                    <button class="info-btn" (click)="downloadImage(image)">
+                        ⬇️ Download
+                    </button>
+                    <button class="info-btn" (click)="shareImage(image)">
+                        🔗 Share
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-details">
+                <div class="detail-row">
+                    <span class="label">Category:</span>
+                    <span class="value">{{ image.category }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date:</span>
+                    <span class="value">{{ image.uploadDate | date:'full' }}</span>
+                </div>
+                <div class="detail-row" *ngIf="image.photographer">
+                    <span class="label">Photographer:</span>
+                    <span class="value">{{ image.photographer }}</span>
+                </div>
+                <div class="detail-row" *ngIf="image.tags && image.tags.length > 0">
+                    <span class="label">Tags:</span>
+                    <div class="tags-list">
+                        <span class="tag" *ngFor="let tag of image.tags">#{{ tag }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Counter -->
+            <div class="image-counter">
+                {{ currentImageIndex() + 1 }} / {{ currentAlbumImages().length }}
+            </div>
+        </div>
+    </div>
+</div>
