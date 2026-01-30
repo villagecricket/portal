@@ -1,26 +1,87 @@
-<div class="container">
+<div class="teams-form-container animate-fade">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="row g-3">
+        <div class="form-grid">
+            <!-- Left Column: Logo & Branding -->
+            <div class="sidebar-section">
+                <div class="premium-card logo-card sticky-top">
+                    <h5 class="section-title"><i class="bi bi-image me-2"></i>Team Logo</h5>
+                    <div class="logo-upload-wrapper">
+                        <app-image-upload [control]="form.get('LogoURL')!"
+                            [defaultUrl]="form.get('LogoURL')!.value"></app-image-upload>
+                        <p class="small text-muted mt-3">Upload a high-quality PNG or JPG (Recommended: 512x512px)</p>
+                    </div>
 
-            <!-- LOGO -->
-            <div class="col-md-4 text-center">
-                <div class="profile-upload">
-                    <app-image-upload [control]="form.get('LogoURL')!"></app-image-upload>
-                </div>
-            </div>
-
-            <!-- Fields -->
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <app-input label="Team Name" [control]="form.get('Name')!" placeholder="Enter Team Name"
-                            type="text" />
+                    <div class="mt-4">
+                        <app-input label="Team Slogan" [control]="form.get('Slogan')!"
+                            placeholder="e.g. Play Like a Pro" type="text" icon="bi-chat-quote" />
                     </div>
                 </div>
             </div>
-            <!-- Submit -->
-            <div class="col-12 text-center">
-                <app-button label="Team Registration" type="submit"></app-button>
+
+            <!-- Right Column: Details Forms -->
+            <div class="main-content-section">
+                <!-- Basic Info -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-info-circle me-2"></i>Core Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <app-input label="Team Name *" [control]="form.get('Name')!" placeholder="Enter Team Name"
+                                type="text" icon="bi-shield-check" />
+                        </div>
+                        <div class="col-md-5">
+                            <app-input label="Founded Year" [control]="form.get('Founded')!" placeholder="e.g. 2020"
+                                type="text" icon="bi-calendar-event" />
+                        </div>
+                        <div class="col-md-12">
+                            <app-input label="Location" [control]="form.get('Location')!" placeholder="City / Region"
+                                type="text" icon="bi-geo-alt" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personnel -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-people me-2"></i>Team Personnel</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <app-input label="Captain Name *" [control]="form.get('Captain')!"
+                                placeholder="Current Captain" type="text" icon="bi-person-badge" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Head Coach" [control]="form.get('Coach')!" placeholder="Head Coach Name"
+                                type="text" icon="bi-person-gear" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Owner Name" [control]="form.get('OwnerName')!" placeholder="Owner Name"
+                                type="text" icon="bi-person-workspace" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Contact Details" [control]="form.get('Contact')!"
+                                placeholder="Mobile or Email" type="text" icon="bi-telephone" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-journal-text me-2"></i>About the Team</h5>
+                    <div class="col-12">
+                        <div class="form-group custom-textarea">
+                            <label class="form-label fw-bold small text-uppercase opacity-75">Team Biography /
+                                Achievements</label>
+                            <textarea formControlName="Bio" class="form-control" rows="5"
+                                placeholder="Tell us more about the team's history and achievements..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions-footer mt-5 d-flex gap-3">
+                    <app-button [label]="isEdit ? 'Update Team Profile' : 'Register Team'" type="submit"
+                        class="w-100 flex-grow-1" [variant]="'primary'"></app-button>
+                    <button type="button" class="btn btn-outline-secondary px-5"
+                        (click)="router.navigate(['/teams'])">Cancel</button>
+                </div>
             </div>
         </div>
     </form>

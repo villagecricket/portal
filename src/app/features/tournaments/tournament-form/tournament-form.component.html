@@ -1,0 +1,120 @@
+<div class="tournament-form-container animate-fade">
+    <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+            <!-- Left Column: Branding & Quick Info -->
+            <div class="sidebar-section">
+                <!-- Logo Card -->
+                <div class="premium-card logo-card mb-4 sticky-top">
+                    <h5 class="section-title"><i class="bi bi-trophy me-2"></i>Tournament Logo</h5>
+                    <div class="logo-upload-wrapper">
+                        <app-image-upload [control]="tournamentForm.get('LogoURL')!"
+                            [defaultUrl]="tournamentForm.get('LogoURL')!.value"></app-image-upload>
+                        <p class="small text-muted mt-3">Upload tournament emblem (Max 2MB)</p>
+                    </div>
+
+                    <div class="mt-4 text-start">
+                        <app-select label="Status" [control]="tournamentForm.get('Status')!"
+                            [options]="tournamentStatuses"></app-select>
+                        <app-select label="Type" [control]="tournamentForm.get('Type')!"
+                            [options]="tournamentTypes"></app-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Full Details -->
+            <div class="main-content-section">
+                <!-- Basic Info -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-info-circle me-2"></i>General Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <app-input label="Tournament Name *" [control]="tournamentForm.get('Name')!"
+                                placeholder="e.g. Kattur Premier League 2026" type="text" icon="bi-award" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Organizer" [control]="tournamentForm.get('Organizer')!"
+                                placeholder="Club Name or Sponsor" type="text" icon="bi-briefcase" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Prize Pool" [control]="tournamentForm.get('PrizePool')!"
+                                placeholder="e.g. ₹1,00,000" type="text" icon="bi-cash-coin" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Location" [control]="tournamentForm.get('Location')!"
+                                placeholder="Stadium or City" type="text" icon="bi-geo-alt" />
+                        </div>
+                        <div class="col-md-6">
+                            <app-input label="Category" [control]="tournamentForm.get('Category')!"
+                                placeholder="e.g. Open Age, Under 19" type="text" icon="bi-tags" />
+                        </div>
+                        <div class="col-12">
+                            <app-textarea label="Description" [control]="tournamentForm.get('Description')!"
+                                placeholder="Brief overview of the tournament..." [rows]="3"></app-textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-calendar-check me-2"></i>Schedule</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <app-datepicker label="Start Date *"
+                                [control]="tournamentForm.get('StartDate')!"></app-datepicker>
+                        </div>
+                        <div class="col-md-6">
+                            <app-datepicker label="End Date *"
+                                [control]="tournamentForm.get('EndDate')!"></app-datepicker>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner Image -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-image me-2"></i>Tournament Banner</h5>
+                    <div class="logo-upload-wrapper bg-light rounded-3 p-4 text-center border-dashed">
+                        <app-image-upload [control]="tournamentForm.get('BannerURL')!"
+                            [defaultUrl]="tournamentForm.get('BannerURL')!.value"></app-image-upload>
+                        <p class="small text-muted mt-3">Recommended size: 1200x400px</p>
+                    </div>
+                </div>
+
+                <!-- Participating Teams -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-people me-2"></i>Participating Teams</h5>
+                    <p class="text-muted small mb-4">Select the teams competing for the title.</p>
+
+                    <div class="team-selection-grid">
+                        <div class="team-checkbox-card" *ngFor="let team of availableTeams()"
+                            [class.selected]="isSelected(team.TeamID)" (click)="toggleTeam(team.TeamID)">
+                            <div class="p-3 d-flex align-items-center gap-3">
+                                <img [src]="team.FullLogoURL" class="team-logo-sm">
+                                <span class="team-name text-truncate">{{ team.Name }}</span>
+                                <i class="bi bi-check-circle-fill ms-auto text-warning"
+                                    *ngIf="isSelected(team.TeamID)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="availableTeams().length === 0" class="text-center p-4">
+                        <p class="text-muted">No teams found. Please create teams first.</p>
+                    </div>
+                </div>
+
+                <!-- Rules & Regulations -->
+                <div class="premium-card mb-4">
+                    <h5 class="section-title"><i class="bi bi-file-text me-2"></i>Rules & Regulations</h5>
+                    <app-textarea label="Tournament Rules" [control]="tournamentForm.get('Rules')!"
+                        placeholder="List out specific match rules, points system, etc..." [rows]="5"></app-textarea>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="actions-footer mt-5 d-flex gap-3">
+                    <app-button [label]="isEdit ? 'Update Tournament' : 'Create Tournament'" type="submit"
+                        class="w-100 flex-grow-1" [variant]="'primary'"
+                        [disabled]="tournamentForm.invalid || isSubmitting()"></app-button>
+                    <button type="button" class="btn btn-outline-secondary px-5" (click)="cancel()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

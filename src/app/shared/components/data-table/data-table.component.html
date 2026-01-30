@@ -82,7 +82,7 @@
           </ng-container>
 
 
-          <ng-container *ngIf="!col.render && !col.actions && !col.date">
+          <ng-container *ngIf="!col.render && !col.actions && !col.date && col.type!=='image'">
             <span [innerHTML]="row[col.key] | highlight:filters[col.key]"></span>
           </ng-container>
 
@@ -100,14 +100,19 @@
             </ng-container>
           </ng-container>
 
-          <ng-container *ngIf="col.isSelect && (!col.condition || col.condition(row))">
+          <ng-container *ngIf="col.type === 'image'">
+            <img [src]="row[col.key] || 'assets/avatars/default.jpg'" class="table-img shadow-sm"
+              style="width: 50px; height: 50px; border-radius: 8px; object-fit: contain;">
+          </ng-container>
+
+          <!-- <ng-container *ngIf="col.isSelect && (!col.condition || col.condition(row))">
             <select class="form-select form-select-sm" [ngModel]="getSelected(row.ChildID, col.key)"
               [disabled]="col.isDisabled ?? false" (ngModelChange)="onSelectChange($event, row, col.key)">
               <option *ngFor="let opt of col.options" [ngValue]="opt">
                 {{ col.optionLabelFn ? col.optionLabelFn(opt) : opt }}
               </option>
             </select>
-          </ng-container>
+          </ng-container> -->
 
         </td>
       </tr>

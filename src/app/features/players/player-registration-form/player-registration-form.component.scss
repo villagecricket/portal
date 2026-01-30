@@ -1,0 +1,167 @@
+:host {
+    display: block;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.registration-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .page-title {
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    align-items: start;
+
+    @media (max-width: 992px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.premium-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        transform: translateY(-2px);
+    }
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 1rem;
+
+    i {
+        color: #1e40af; // Darker blue for players
+    }
+}
+
+.logo-card {
+    text-align: center;
+
+    .logo-upload-wrapper {
+        padding: 1rem;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+    }
+}
+
+.custom-check {
+    .form-check-input {
+        width: 1.25em;
+        height: 1.25em;
+        cursor: pointer;
+
+        &:checked {
+            background-color: #1e40af;
+            border-color: #1e40af;
+        }
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        padding-top: 2px;
+        color: #475569;
+    }
+}
+
+.custom-textarea {
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        background: #f8fafc;
+        transition: all 0.2s;
+
+        &:focus {
+            background: white;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        }
+    }
+}
+
+.sticky-top {
+    top: 2rem;
+    z-index: 10;
+}
+
+.actions-footer {
+    padding-bottom: 4rem;
+}
+
+// Animations
+.animate-fade {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+::ng-deep {
+
+    app-input,
+    app-select,
+    app-datepicker,
+    app-mobile-input,
+    app-email,
+    app-textarea {
+        .form-label {
+            font-size: 0.85rem !important;
+            color: #64748b !important;
+            margin-bottom: 0.5rem !important;
+            font-weight: 600 !important;
+        }
+
+        .form-control,
+        .form-select {
+            height: 50px !important;
+            border-radius: 12px !important;
+            border-width: 2px !important;
+            font-weight: 500 !important;
+            border-color: #e2e8f0 !important;
+
+            &:focus {
+                border-color: #1e40af !important;
+                box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1) !important;
+            }
+        }
+
+        textarea.form-control {
+            height: auto !important;
+        }
+    }
+}

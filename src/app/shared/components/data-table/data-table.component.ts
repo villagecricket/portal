@@ -12,6 +12,7 @@ export interface TableColumn {
     combinDateandTime?: any,
 
   }
+  type?: string;
   isDateTime?: boolean;
   dateFormat?: any;
   isSelect?: boolean;
@@ -43,7 +44,7 @@ export interface TableConfig {
 
 @Component({
   selector: 'app-data-table',
-  
+
   imports: [CommonModule, FormsModule, HighlightPipe,],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']

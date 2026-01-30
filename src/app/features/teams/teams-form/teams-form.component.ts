@@ -19,7 +19,7 @@ export class TeamsFormComponent implements OnInit {
     private fb: FormBuilder,
     private teamService: TeamsService,
     private toast: ToastService,
-    private router: Router
+    public router: Router
   ) { }
 
   ngOnInit(): void {
@@ -45,7 +45,15 @@ export class TeamsFormComponent implements OnInit {
         this.form.patchValue({
           TeamID: teams.TeamID,
           Name: teams.Name,
-          LogoURL: teams.LogoURL
+          LogoURL: teams.LogoURL,
+          Captain: teams.Captain,
+          Founded: teams.Founded,
+          OwnerName: teams.OwnerName,
+          Contact: teams.Contact,
+          Bio: teams.Bio,
+          Slogan: teams.Slogan,
+          Location: teams.Location,
+          Coach: teams.Coach
         });
       },
       error: (error: any) => {
@@ -59,7 +67,15 @@ export class TeamsFormComponent implements OnInit {
     this.form = this.fb.group({
       TeamID: [],
       Name: ['', Validators.required],
-      LogoURL: ['']
+      LogoURL: [''],
+      Captain: ['', Validators.required],
+      Founded: [''],
+      OwnerName: [''],
+      Contact: [''],
+      Bio: [''],
+      Slogan: [''],
+      Location: [''],
+      Coach: ['']
     })
   }
 
@@ -70,16 +86,31 @@ export class TeamsFormComponent implements OnInit {
       return;
     }
 
-    const teams = this.form.value;
+    const teamsData = this.form.getRawValue();
+    const payload = new FormData();
+
+    // Handle File upload vs existing string URL
+    if (teamsData.LogoURL instanceof File) {
+      payload.append('image', teamsData.LogoURL);
+    } else if (teamsData.LogoURL && typeof teamsData.LogoURL === 'string') {
+      payload.append('LogoURL', teamsData.LogoURL);
+    }
+
+    // Append other fields
+    Object.keys(teamsData).forEach(key => {
+      if (key !== 'LogoURL' && teamsData[key] !== null && teamsData[key] !== undefined) {
+        payload.append(key, teamsData[key]);
+      }
+    });
 
     const request$ = this.isEdit
-      ? this.teamService.update(teams.TeamID, teams)
-      : this.teamService.create(teams);
+      ? this.teamService.update(teamsData.TeamID, payload)
+      : this.teamService.create(payload);
 
     request$.subscribe({
       next: (response: any) => {
         this.toast.success(response?.message || (this.isEdit ? 'Teams updated successfully.' : 'Teams created successfully.'));
-        this.router.navigate(['teams-list']);
+        this.router.navigate(['/kkk/teams-list']);
       },
       error: (error) => {
         console.error(this.isEdit ? 'Update failed:' : 'Creation failed:', error);
