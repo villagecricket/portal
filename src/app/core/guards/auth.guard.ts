@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     if (auth.isLoggedIn()) {
         const currentUser = auth.getUser();
         // If owner tries to access /kkk routes, kick them to /auction-live
-        if (currentUser && currentUser.Role === 'owner' && state.url.startsWith('/kkk')) {
+        if (currentUser && currentUser.role === 'owner' && state.url.startsWith('/kkk')) {
             router.navigate(['/auction-live']);
             return false;
         }

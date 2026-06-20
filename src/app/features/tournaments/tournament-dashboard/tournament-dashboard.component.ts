@@ -29,8 +29,8 @@ export class TournamentDashboardComponent implements OnInit {
    getImageUrl(url: string | undefined): string {
       if (!url) return '';
       if (url.startsWith('http') || url.startsWith('assets')) return url;
-      const baseUrl = environment.apiUrl;
-      return baseUrl + url;
+      if (url.startsWith('/api')) return environment.apiUrl.replace('/api', '') + url;
+      return environment.apiUrl + url;
    }
 
    tournament = signal<Tournament | null>(null);

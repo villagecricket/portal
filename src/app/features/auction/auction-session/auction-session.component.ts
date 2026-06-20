@@ -26,7 +26,13 @@ export class AuctionSessionComponent implements OnInit {
   ngOnInit(): void {
     sessionStorage.removeItem('SessionID');
     this.auctionSession$ = this.auctionSessionService.getAll().pipe(
-      map((response: any) => response?.data?.sessions || [])
+      map((response: any) => {
+        const sessions = response?.data?.sessions || [];
+        return sessions.map((s: any) => ({
+          ...s,
+          TournamentName: s.Tournament?.Name || 'Not Linked'
+        }));
+      })
     );
 
   }
@@ -34,6 +40,7 @@ export class AuctionSessionComponent implements OnInit {
   tableColumn = [
     { key: 'SessionID', label: 'Session ID', searchable: true },
     { key: 'Name', label: 'Session Name', searchable: true },
+    { key: 'TournamentName', label: 'Tournament', searchable: true },
     { key: 'StartDate', label: 'Start Date', date: { isDateTime: false } },
     { key: 'EndDate', label: 'End Date', date: { isDateTime: false } },
     {

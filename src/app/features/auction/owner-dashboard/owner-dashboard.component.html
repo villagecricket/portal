@@ -16,6 +16,10 @@
       <p><strong>Verification:</strong> {{ ownerData.verificationStatus }}</p>
       <p><strong>Payment:</strong> {{ ownerData.feePaymentStatus }}</p>
     </section>
+    <section class="card owner-info" *ngIf="!ownerData && !teamData && !auctionSession">
+      <h2>Welcome!</h2>
+      <p>Please complete your team registration to participate in the auction.</p>
+    </section>
 
     <section class="card team-info" *ngIf="teamData">
       <h2>{{ teamData.name }}</h2>

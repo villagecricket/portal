@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TournamentService } from '../services/tournament.service';
 import { TeamsService } from '@features/teams/services/teams.service';
@@ -34,6 +34,13 @@ export class TournamentFormComponent implements OnInit {
     { label: 'League (Round Robin)', value: 'League' },
     { label: 'Knockout', value: 'Knockout' },
     { label: 'Hybrid (Group + Knockout)', value: 'Hybrid' }
+  ];
+
+  ballTypes = [
+    { label: 'Tennis', value: 'Tennis' },
+    { label: 'Leather', value: 'Leather' },
+    { label: 'Hard Tennis', value: 'Hard Tennis' },
+    { label: 'Other', value: 'Other' }
   ];
 
   tournamentStatuses = [
@@ -82,12 +89,14 @@ export class TournamentFormComponent implements OnInit {
       MinTeams: [4, [Validators.required, Validators.min(2)]],
       // Match Configuration
       MatchFormat: ['T20', Validators.required],
+      BallType: ['Tennis', Validators.required],
       OversPerMatch: [20, [Validators.required, Validators.min(1)]],
       PlayersPerTeam: [11, [Validators.required, Validators.min(1)]],
       BallsPerOver: [6],
       PowerplayOvers: [6],
       // Financial & Contact
       RegistrationFee: [0],
+      PrizeDetails: this.fb.array([]),
       ContactEmail: ['', Validators.email],
       ContactPhone: [''],
       WebsiteURL: [''],
@@ -114,6 +123,28 @@ export class TournamentFormComponent implements OnInit {
     });
   }
 
+  get prizeDetails(): FormArray {
+    return this.tournamentForm.get('PrizeDetails') as FormArray;
+  }
+
+  updatePrizeCount(event: any): void {
+    const count = parseInt(event.target.value) || 0;
+    const currentLength = this.prizeDetails.length;
+
+    if (count > currentLength) {
+      for (let i = currentLength; i < count; i++) {
+        this.prizeDetails.push(this.fb.group({
+          title: ['', Validators.required],
+          amount: [0, Validators.required]
+        }));
+      }
+    } else if (count < currentLength) {
+      for (let i = currentLength; i > count; i--) {
+        this.prizeDetails.removeAt(i - 1);
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.loadTeams();
     const id = this.route.snapshot.params['id'];
@@ -127,11 +158,13 @@ export class TournamentFormComponent implements OnInit {
     this.teamService.getAll().subscribe((res: any) => {
       const teams = res.data?.teams || res || [];
       teams.forEach((t: any) => {
-        if (t.LogoURL && !t.LogoURL.startsWith('http')) {
-          t.FullLogoURL = environment.apiUrl + t.LogoURL;
-        } else {
-          t.FullLogoURL = t.LogoURL || 'assets/logo.jpeg';
-        }
+        const getImageUrl = (url: string) => {
+          if (!url) return null;
+          if (url.startsWith('http')) return url;
+          if (url.startsWith('/api')) return environment.apiUrl.replace('/api', '') + url;
+          return environment.apiUrl + url;
+        };
+        t.FullLogoURL = getImageUrl(t.LogoURL) || 'assets/logo.jpeg';
       });
       this.availableTeams.set(teams);
     });
@@ -163,6 +196,7 @@ export class TournamentFormComponent implements OnInit {
         MinTeams: t.MinTeams || 4,
         // Match Configuration
         MatchFormat: t.MatchFormat || 'T20',
+        BallType: t.BallType || 'Tennis',
         OversPerMatch: t.OversPerMatch || 20,
         PlayersPerTeam: t.PlayersPerTeam || 11,
         BallsPerOver: t.BallsPerOver || 6,
@@ -189,6 +223,17 @@ export class TournamentFormComponent implements OnInit {
         PointsForNoResult: t.PointsForNoResult || 1
       });
       this.selectedTeamIds.set(t.Teams?.map((team: any) => team.TeamID) || []);
+
+      // Patch Prize Details Array
+      if (t.PrizeDetails && Array.isArray(t.PrizeDetails)) {
+        this.prizeDetails.clear();
+        t.PrizeDetails.forEach((prize: any) => {
+          this.prizeDetails.push(this.fb.group({
+            title: [prize.title, Validators.required],
+            amount: [prize.amount, Validators.required]
+          }));
+        });
+      }
     });
   }
 
@@ -272,7 +317,12 @@ export class TournamentFormComponent implements OnInit {
         if ((key === 'RegistrationStartDate' || key === 'RegistrationEndDate') && formVal[key] === '') {
           return;
         }
-        payload.append(key, formVal[key]);
+
+        if (key === 'PrizeDetails' && Array.isArray(formVal[key])) {
+          payload.append(key, JSON.stringify(formVal[key]));
+        } else {
+          payload.append(key, formVal[key]);
+        }
       }
     });
 

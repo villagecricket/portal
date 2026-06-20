@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataTableComponent, TableConfig } from '@shared/components/data-table/data-table.component';
 import { ButtonComponent } from '@shared/forms/form-controls';
@@ -13,7 +13,7 @@ import { environment } from '@environments/environment';
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss'
 })
-export class TeamsComponent {
+export class TeamsComponent implements OnInit {
 
   constructor(
     private router: Router,

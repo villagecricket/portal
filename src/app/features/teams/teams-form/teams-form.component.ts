@@ -80,30 +80,30 @@ export class TeamsFormComponent implements OnInit {
   getByID(id: number) {
     this.teamService.getById(id).subscribe({
       next: (response: any) => {
-        const teams = response?.data?.teams;
+        const team = response?.data?.team;
 
-        if (!teams) {
+        if (!team) {
           console.warn('No Teams data found');
           return;
         }
 
         this.form.patchValue({
-          TeamID: teams.TeamID,
-          Name: teams.Name,
-          LogoURL: teams.LogoURL,
-          Captain: teams.Captain,
-          Founded: teams.Founded,
-          OwnerName: teams.OwnerName,
-          Contact: teams.Contact,
-          Bio: teams.Bio,
-          Slogan: teams.Slogan,
-          Location: teams.Location,
-          Coach: teams.Coach
+          TeamID: team.TeamID,
+          Name: team.Name,
+          LogoURL: team.LogoURL,
+          Captain: team.Captain,
+          Founded: team.Founded,
+          OwnerName: team.OwnerName,
+          Contact: team.Contact,
+          Bio: team.Bio,
+          Slogan: team.Slogan,
+          Location: team.Location,
+          Coach: team.Coach
         });
 
-        if (teams.Players) {
-          this.teamRoster.set(teams.Players);
-          this.scoutedPlayerIds.set(teams.Players.map((p: any) => p.PlayerID));
+        if (team.Players) {
+          this.teamRoster.set(team.Players);
+          this.scoutedPlayerIds.set(team.Players.map((p: any) => p.PlayerID));
         }
       },
       error: (error: any) => {

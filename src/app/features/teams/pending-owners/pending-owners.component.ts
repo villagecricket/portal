@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OnboardingService } from '@core/services/onboarding.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-pending-owners',
@@ -27,13 +28,18 @@ export class PendingOwnersComponent implements OnInit {
   pendingOwners = signal<any[]>([]);
   loading = signal(true);
   
-  displayedColumns: string[] = ['ownerName', 'contact', 'teamName', 'location', 'actions'];
+  displayedColumns: string[] = ['ownerName', 'contact', 'teamName', 'location', 'payment', 'actions'];
 
   private onboardingService = inject(OnboardingService);
   private snackBar = inject(MatSnackBar);
 
   ngOnInit() {
     this.loadPendingOwners();
+  }
+
+  getFileUrl(path: string | undefined): string {
+    if (!path) return '';
+    return path.startsWith('http') ? path : `${environment.apiUrl}${path}`;
   }
 
   loadPendingOwners() {

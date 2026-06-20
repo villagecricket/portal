@@ -41,12 +41,27 @@ export class OnboardingService {
         return this.api.post(`${this.endpoint}/admin/players/${playerId}/verify`, { status, notes });
     }
 
-    registerTeam(payload: any): Observable<any> {
-        return this.api.post(`${this.endpoint}/public/register-team`, payload);
+    registerTeam(payload: any, receiptFile: File): Observable<any> {
+        const formData = new FormData();
+        Object.keys(payload).forEach(key => {
+            if (payload[key] !== null && payload[key] !== undefined) {
+                formData.append(key, payload[key]);
+            }
+        });
+        formData.append('receipt', receiptFile);
+        return this.api.post(`${this.endpoint}/public/register-team`, formData);
     }
 
     registerPlayerForAuction(payload: any): Observable<any> {
-        return this.api.post(`${this.endpoint}/public/register-player`, payload);
+        const formData = new FormData();
+        Object.keys(payload).forEach(key => {
+            if (key === 'photoFile' && payload[key] instanceof File) {
+                formData.append('photo', payload[key]);
+            } else if (payload[key] !== null && payload[key] !== undefined) {
+                formData.append(key, payload[key]);
+            }
+        });
+        return this.api.post(`${this.endpoint}/public/register-player`, formData);
     }
 
     getOwnerDashboard(): Observable<any> {

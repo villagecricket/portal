@@ -5,17 +5,17 @@
   <div class="nav-inner">
     <!-- Brand -->
     <a class="nav-brand" (click)="scrollTo('home')">
-      <img [src]="appSettings().logoUrl || 'assets/logo.jpeg'" alt="KPL Logo" class="nav-logo">
+      <img [src]="appSettings().logoUrl || 'assets/logo.jpeg'" alt="Eriyur Champion League Logo" class="nav-logo">
       <div class="nav-brand-text">
-        <span class="nav-title">{{ appSettings().appName || 'Kattur Premier League' }}</span>
+        <span class="nav-title">{{ appSettings().appName || 'Eriyur Champion League' }}</span>
         <span class="nav-season">Season {{ selectedSeason }}</span>
       </div>
     </a>
 
     <!-- Season selector -->
-    <select class="season-select" [(ngModel)]="selectedSeason" name="season">
+    <!-- <select class="season-select" [(ngModel)]="selectedSeason" name="season">
       <option *ngFor="let s of availableSeasons" [value]="s">KPL {{ s }}</option>
-    </select>
+    </select> -->
 
     <!-- Desktop links -->
     <ul class="nav-links">
@@ -26,16 +26,16 @@
       ]">
         <a [class.active]="activeSection() === item.id" (click)="scrollTo(item.id)">{{ item.label }}</a>
       </li>
-      <li><a routerLink="/polling">Polls</a></li>
-    </ul>
+</ul>
 
-    <div class="nav-actions">
+       <div class="nav-actions">
       <!-- Live indicator -->
       <span class="live-pill" *ngIf="liveMatches().length > 0" (click)="scrollTo('fixtures')">
         <span class="live-dot"></span> LIVE
       </span>
-      <button class="btn-register-nav" (click)="scrollTo('register')">Register Team</button>
-      <!-- Mobile hamburger -->
+<button class="btn-register-nav" (click)="scrollTo('register')">Register Team</button>
+        <button class="btn-login-nav" routerLink="/login">Login</button>
+        <!-- Mobile hamburger -->
       <button class="hamburger" (click)="mobileNavOpen = !mobileNavOpen" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -44,12 +44,12 @@
 
   <!-- Mobile menu -->
   <div class="mobile-menu" [class.open]="mobileNavOpen">
-    <a *ngFor="let item of [
-      {id:'home',label:'Home'},{id:'teams',label:'Teams'},{id:'standings',label:'Standings'},
-      {id:'fixtures',label:'Fixtures'},{id:'players',label:'Players'},{id:'stats',label:'Stats'},
-      {id:'auction',label:'Auction'},{id:'gallery',label:'Gallery'},{id:'register',label:'Register Team'},{id:'contact',label:'Contact'}
-    ]" (click)="scrollTo(item.id)">{{ item.label }}</a>
-    <a routerLink="/polling" (click)="mobileNavOpen = false">Polls</a>
+<a *ngFor="let item of [
+       {id:'home',label:'Home'},{id:'teams',label:'Teams'},{id:'standings',label:'Standings'},
+       {id:'fixtures',label:'Fixtures'},{id:'players',label:'Players'},{id:'stats',label:'Stats'},
+       {id:'auction',label:'Auction'},{id:'gallery',label:'Gallery'},{id:'register',label:'Register Team'},{id:'contact',label:'Contact'}
+     ]" (click)="scrollTo(item.id)">{{ item.label }}</a>
+       <a routerLink="/login" (click)="mobileNavOpen = false" class="login-nav-mobile">Login</a>
   </div>
 </nav>
 
@@ -383,7 +383,7 @@
       <div>
         <span class="section-eyebrow">Tournament Leaders</span>
         <h2 class="section-title">Top Performers</h2>
-        <p class="section-sub">KPL {{ selectedSeason }} best of the best</p>
+        <p class="section-sub">{{ selectedSeason }} best of the best</p>
       </div>
     </div>
 
@@ -476,7 +476,7 @@
       <div>
         <span class="section-eyebrow" style="color: rgba(255,215,0,0.8);">Player Auction</span>
         <h2 class="section-title" style="color:#fff;">Bid. Win. Build.</h2>
-        <p class="section-sub" style="color: rgba(255,255,255,0.6);">Build your dream squad at the KPL auction</p>
+        <p class="section-sub" style="color: rgba(255,255,255,0.6);">Build your dream squad at the auction</p>
       </div>
     </div>
 
@@ -496,7 +496,7 @@
         <div class="carousel-item" *ngFor="let auction of auctionList; let i = index; let first = first" [class.active]="first">
           <div class="auction-card">
             <div class="auction-card-left">
-              <span class="auction-badge"><i class="bi bi-broadcast me-2"></i> KPL AUCTION</span>
+              <span class="auction-badge"><i class="bi bi-broadcast me-2"></i> AUCTION</span>
               <h2 class="auction-title">{{ auction.Name }}</h2>
               <p class="auction-desc">Bid on star players. Build your franchise. Conquer the league.</p>
 
@@ -632,209 +632,6 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════════════════════
-     REGISTRATION SECTION
-══════════════════════════════════════════════════════════ -->
-<section id="register" class="section-register">
-  <div class="section-container">
-    <div class="register-card">
-      <!-- Left panel -->
-      <div class="register-left">
-        <img src="assets/hero-image.jpeg" alt="Cricket" class="register-bg-img">
-        <div class="register-left-overlay"></div>
-        <div class="register-left-content">
-          <h2>Join the League</h2>
-          <p>Register your franchise and compete in KPL {{ selectedSeason }}. Bid on players, build your squad, and write your legacy.</p>
-          <ul class="register-perks">
-            <li><i class="bi bi-check-circle-fill"></i> Official Franchise Status</li>
-            <li><i class="bi bi-check-circle-fill"></i> Access to Live Auction Portal</li>
-            <li><i class="bi bi-check-circle-fill"></i> Team Dashboard & Analytics</li>
-            <li><i class="bi bi-check-circle-fill"></i> Priority fixture scheduling</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Right form -->
-        <div class="register-right">
-        <div class="register-header-tabs">
-          <button type="button" [class.active]="regType === 'team'" (click)="setRegistrationType('team')">Register Team</button>
-          <button type="button" [class.active]="regType === 'player'" (click)="setRegistrationType('player')">Register as Player</button>
-        </div>
-
-        <div class="alert-success-custom" *ngIf="registrationSuccess">
-          <i class="bi bi-check-circle-fill"></i>
-          <div>
-            <strong>Registration submitted!</strong>
-            <p *ngIf="regType === 'team'">Admin will review and approve your team. You'll receive login credentials once approved.</p>
-            <p *ngIf="regType === 'player'">You are now registered for the auction pool!</p>
-          </div>
-        </div>
-
-        <div class="alert-error-custom" *ngIf="registrationError">
-          <i class="bi bi-exclamation-triangle-fill"></i>
-          <span>{{ registrationError }}</span>
-        </div>
-
-        <!-- TEAM REGISTRATION -->
-        <form *ngIf="!registrationSuccess && regType === 'team'" (ngSubmit)="submitRegistration()">
-          <div class="form-section-label">Select Auction Session</div>
-          <div class="form-group">
-            <label>Upcoming Auction <span class="req">*</span></label>
-            <select [(ngModel)]="regForm.sessionId" name="sessionId" required>
-              <option [ngValue]="null" disabled>Select Auction Session</option>
-              <option *ngFor="let a of auctionList" [ngValue]="a.SessionID || a.id || a._id">{{ a.Name }}</option>
-            </select>
-            <span class="form-hint">If you already have a team with this phone number, you will just be added to this auction.</span>
-          </div>
-
-          <div class="form-section-label">Owner Information</div>
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Full Name <span class="req">*</span></label>
-              <input type="text" [(ngModel)]="regForm.ownerName" name="ownerName" placeholder="John Doe" required>
-            </div>
-            <div class="form-group">
-              <label>Phone Number <span class="req">*</span></label>
-              <input type="tel" [(ngModel)]="regForm.contactNumber" (ngModelChange)="onTeamLookupChange()" name="contactNumber" placeholder="+91 9876543210" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Password <span class="req">*</span></label>
-            <div class="password-wrap">
-              <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="regForm.password" name="password"
-                     placeholder="Create a strong password" required>
-              <button type="button" (click)="showPassword = !showPassword" class="toggle-pw" aria-label="Toggle password">
-                <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="form-section-label" style="margin-top:1.5rem">Team Information</div>
-          <div class="form-group">
-            <label>Team Name <span class="req">*</span></label>
-            <input type="text" [(ngModel)]="regForm.teamName" (ngModelChange)="onTeamLookupChange()" name="teamName" placeholder="E.g. Kattur Kings" required>
-          </div>
-
-          <div class="master-match-card" *ngIf="existingTeamMatch">
-            <div class="master-match-icon">
-              <i class="bi bi-shield-check"></i>
-            </div>
-            <div class="master-match-copy">
-              <strong>Existing team master found</strong>
-              <span>{{ existingTeamMatch.Name }} will be reused for this auction registration.</span>
-            </div>
-            <button type="button" (click)="applyExistingTeam(existingTeamMatch)">
-              Use details
-            </button>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" [(ngModel)]="regForm.location" name="location" placeholder="City / Area">
-            </div>
-            <div class="form-group">
-              <label>Team Slogan</label>
-              <input type="text" [(ngModel)]="regForm.slogan" name="slogan" placeholder="A catchy slogan">
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" [disabled]="isRegistering">
-            <span *ngIf="isRegistering" class="spinner-border spinner-border-sm me-2"></span>
-            {{ isRegistering ? 'Registering...' : 'Submit Registration' }}
-          </button>
-        </form>
-
-        <!-- PLAYER REGISTRATION -->
-        <form *ngIf="!registrationSuccess && regType === 'player'" (ngSubmit)="submitPlayerRegistration()">
-          <div class="form-section-label">Select Auction Session</div>
-          <div class="form-group">
-            <label>Upcoming Auction <span class="req">*</span></label>
-            <select [(ngModel)]="playerRegForm.sessionId" name="sessionId" required>
-              <option [ngValue]="null" disabled>Select Auction Session</option>
-              <option *ngFor="let a of auctionList" [ngValue]="a.SessionID || a.id || a._id">{{ a.Name }}</option>
-            </select>
-          </div>
-
-          <div class="form-section-label">Player Details</div>
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Full Name <span class="req">*</span></label>
-              <input type="text" [(ngModel)]="playerRegForm.playerName" (ngModelChange)="onPlayerLookupChange()" name="playerName" placeholder="Your Name" required>
-            </div>
-            <div class="form-group">
-              <label>Father's Name <span class="req">*</span></label>
-              <input type="text" [(ngModel)]="playerRegForm.fatherName" name="fatherName" placeholder="Father's full name" required>
-            </div>
-          </div>
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Phone Number <span class="req">*</span></label>
-              <input type="tel" [(ngModel)]="playerRegForm.contactNumber" (ngModelChange)="onPlayerLookupChange()" name="contactNumber" placeholder="+91 9876543210" required>
-            </div>
-            <div class="form-group">
-              <label>Base Price <span class="req">*</span></label>
-              <input type="number" [(ngModel)]="playerRegForm.basePrice" name="basePrice" placeholder="100000" required>
-            </div>
-          </div>
-
-          <div class="master-match-card player-match-card" *ngIf="existingPlayerMatch">
-            <div class="master-match-icon">
-              <i class="bi bi-person-check"></i>
-            </div>
-            <div class="master-match-copy">
-              <strong>Existing player master found</strong>
-              <span>{{ existingPlayerMatch.Name }} will be reused in the auction pool.</span>
-            </div>
-            <button type="button" (click)="applyExistingPlayer(existingPlayerMatch)">
-              Use details
-            </button>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Role <span class="req">*</span></label>
-              <select [(ngModel)]="playerRegForm.role" name="role" required>
-                <option value="Batsman">Batsman</option>
-                <option value="Bowler">Bowler</option>
-                <option value="All-Rounder">All-Rounder</option>
-                <option value="Wicket Keeper">Wicket Keeper</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Batting Style</label>
-              <select [(ngModel)]="playerRegForm.battingStyle" name="battingStyle">
-                <option value="Right-hand bat">Right-hand bat</option>
-                <option value="Left-hand bat">Left-hand bat</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label>Bowling Style</label>
-              <select [(ngModel)]="playerRegForm.bowlingStyle" name="bowlingStyle">
-                <option value="Right-arm medium">Right-arm medium</option>
-                <option value="Right-arm fast">Right-arm fast</option>
-                <option value="Right-arm offbreak">Right-arm offbreak</option>
-                <option value="Right-arm legbreak">Right-arm legbreak</option>
-                <option value="Left-arm fast">Left-arm fast</option>
-                <option value="Left-arm orthodox">Left-arm orthodox</option>
-                <option value="Left-arm chinaman">Left-arm chinaman</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit player-btn" [disabled]="isRegistering">
-            <span *ngIf="isRegistering" class="spinner-border spinner-border-sm me-2"></span>
-            {{ isRegistering ? 'Registering...' : 'Enter Auction Pool' }}
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 <!-- ═══════════════════════════════════════════════════════
      FOOTER
@@ -866,7 +663,7 @@
           ]">
             <a (click)="scrollTo(item.id)">{{ item.label }}</a>
           </li>
-          <li><a routerLink="/polling">Polls</a></li>
+          <li><a routerLink="/login">Login</a></li>
         </ul>
       </div>
 
@@ -874,7 +671,7 @@
       <div class="footer-links-col">
         <h5>Season Info</h5>
         <ul>
-          <li><span>Season</span> KPL {{ selectedSeason }}</li>
+          <li><span>Season</span> {{ selectedSeason }}</li>
           <li><span>Teams</span> {{ teams().length }}</li>
           <li><span>Players</span> {{ players.length }}</li>
           <li><span>Matches Played</span> {{ completedMatches().length }}</li>
@@ -909,6 +706,144 @@
 <button class="back-to-top" [class.show]="showBackToTop()" (click)="scrollTo('home')" aria-label="Back to top">
   <i class="bi bi-arrow-up"></i>
 </button>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     REGISTER TEAM MODAL
+═══════════════════════════════════════════════════════ -->
+<div class="reg-modal-overlay" *ngIf="registerModalOpen()" (click)="closeRegisterModal()">
+  <div class="reg-modal-panel" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="reg-modal-header">
+      <div class="reg-modal-title">
+        <span class="reg-modal-icon">🏏</span>
+        <div>
+          <h3>Register Your Team</h3>
+          <p *ngIf="selectedAuctionForReg">{{ selectedAuctionForReg.Name }}</p>
+        </div>
+      </div>
+      <button class="reg-modal-close" (click)="closeRegisterModal()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Success State -->
+    <div class="reg-modal-success" *ngIf="registrationSuccess">
+      <div class="reg-success-icon">✅</div>
+      <h3>Registration Submitted!</h3>
+      <p>Admin will review and approve your team.<br>You'll receive login credentials once approved.</p>
+      <div class="reg-success-loader">
+        <div class="success-progress-bar"></div>
+      </div>
+      <p class="reg-success-hint">This window will close automatically...</p>
+    </div>
+
+    <!-- Form Body -->
+    <div class="reg-modal-body" *ngIf="!registrationSuccess">
+
+      <!-- Error -->
+      <div class="reg-alert-error" *ngIf="registrationError">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ registrationError }}</span>
+      </div>
+
+      <form (ngSubmit)="submitRegistration()">
+        <div class="reg-section-label">Auction Session</div>
+        <div class="reg-form-group">
+          <label>Upcoming Auction <span class="req">*</span></label>
+          <select [(ngModel)]="regForm.sessionId" name="sessionId" required>
+            <option [ngValue]="null" disabled>Select Auction Session</option>
+            <option *ngFor="let a of auctionList" [ngValue]="a.SessionID || a.id || a._id">{{ a.Name }}</option>
+          </select>
+        </div>
+
+        <div class="reg-section-label">Owner Information</div>
+        <div class="reg-form-row">
+          <div class="reg-form-group">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="regForm.ownerName" name="ownerName" placeholder="John Doe" required>
+          </div>
+          <div class="reg-form-group">
+            <label>Phone Number <span class="req">*</span></label>
+            <input type="tel" [(ngModel)]="regForm.contactNumber" (ngModelChange)="onTeamLookupChange()" name="contactNumber" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required>
+          </div>
+        </div>
+        <div class="reg-form-group">
+          <label>Password <span class="req">*</span></label>
+          <div class="reg-password-wrap">
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="regForm.password" name="password" placeholder="Create a strong password" required>
+            <button type="button" (click)="showPassword = !showPassword" class="reg-toggle-pw" aria-label="Toggle password">
+              <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="reg-section-label" style="margin-top:1.25rem">Team Information</div>
+        <div class="reg-form-group">
+          <label>Team Name <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="regForm.teamName" (ngModelChange)="onTeamLookupChange()" name="teamName" placeholder="E.g. Kattur Kings" required>
+        </div>
+
+        <div class="master-match-card" *ngIf="existingTeamMatch">
+          <div class="master-match-icon"><i class="bi bi-shield-check"></i></div>
+          <div class="master-match-copy">
+            <strong>Existing team found</strong>
+            <span>{{ existingTeamMatch.Name }} will be reused.</span>
+          </div>
+          <button type="button" (click)="applyExistingTeam(existingTeamMatch)">Use details</button>
+        </div>
+
+        <div class="reg-form-row">
+          <div class="reg-form-group">
+            <label>Location</label>
+            <input type="text" [(ngModel)]="regForm.location" name="location" placeholder="City / Area">
+          </div>
+          <div class="reg-form-group">
+            <label>Team Slogan</label>
+            <input type="text" [(ngModel)]="regForm.slogan" name="slogan" placeholder="A catchy slogan">
+          </div>
+        </div>
+
+        <div class="reg-section-label" style="margin-top:1.25rem">Payment (Fee: ₹10,000)</div>
+
+        <!-- UPI Info -->
+        <div class="reg-upi-card" *ngIf="appSettings().UPIScannerImageURL || appSettings().UPIId">
+          <div class="reg-upi-qr" *ngIf="appSettings().UPIScannerImageURL">
+            <img [src]="appSettings().UPIScannerImageURL" alt="UPI QR Code">
+          </div>
+          <div class="reg-upi-details">
+            <h4><i class="bi bi-qr-code-scan me-2"></i>Scan to Pay</h4>
+            <p *ngIf="appSettings().UPIName"><strong>Name:</strong> {{ appSettings().UPIName }}</p>
+            <p *ngIf="appSettings().UPIId"><strong>UPI ID:</strong> {{ appSettings().UPIId }}</p>
+            <p class="reg-upi-amount">Amount: ₹10,000</p>
+          </div>
+        </div>
+
+        <div class="reg-form-row">
+          <div class="reg-form-group">
+            <label>Transaction ID <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="regForm.transactionId" name="transactionId" placeholder="e.g. T1234567890" required>
+          </div>
+          <div class="reg-form-group">
+            <label>Payment Screenshot <span class="req">*</span></label>
+            <input type="file" accept="image/*,application/pdf" (change)="onReceiptFileSelected($event)" required class="reg-file-input">
+          </div>
+        </div>
+
+        <div class="reg-form-group">
+          <label>Notes</label>
+          <textarea [(ngModel)]="regForm.notes" name="notes" placeholder="Any details regarding payment" rows="2" class="reg-textarea"></textarea>
+        </div>
+
+        <button type="submit" class="reg-submit-btn" [disabled]="isRegistering">
+          <span *ngIf="isRegistering" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isRegistering ? 'Registering...' : 'Submit Registration' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
 
 
 <!-- ═══════════════════════════════════════════════════════

@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SHARED_FORM_COMPONENTS } from '@shared/forms/form-controls';
 import { AuctionSessionService } from '../services/auction-session.service';
+import { TournamentService } from '@features/tournaments/services/tournament.service';
 import { ToastService } from '@shared/services/toast.service';
 import { Router } from '@angular/router';
 
@@ -20,22 +21,38 @@ export class AuctionSessionFormComponent {
   isEdit: boolean = false;
   Status = ['upcoming', 'live', 'completed'];
   StatusOptions = this.Status.map(s => ({ label: s, value: s }));
+  tournaments: any[] = [];
+  tournamentOptions: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private auctionSessionService: AuctionSessionService,
+    private tournamentService: TournamentService,
     private toast: ToastService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.InitForm();
+    this.loadTournaments();
     const id = sessionStorage.getItem('SessionID');
     if (id) {
       this.isEdit = true;
       this.getByID(+id);
     }
+  }
 
+  loadTournaments() {
+    this.tournamentService.getAll().subscribe({
+      next: (res: any) => {
+        this.tournaments = res.data?.tournaments || res.data || [];
+        this.tournamentOptions = this.tournaments.map(t => ({
+          label: t.Name,
+          value: t.TournamentID
+        }));
+      },
+      error: (err) => console.error('Failed to load tournaments', err)
+    });
   }
 
   getByID(id: number) {
@@ -57,6 +74,7 @@ export class AuctionSessionFormComponent {
           Year: session.Year,
           MaxBudget: session.MaxBudget,
           MaxPlayersPerTeam: session.MaxPlayersPerTeam,
+          TournamentID: session.TournamentID
         });
       },
       error: (error: any) => {
@@ -76,6 +94,7 @@ export class AuctionSessionFormComponent {
       Year: [new Date().getFullYear(), [Validators.required, Validators.min(2000)]],
       MaxBudget: [100000, [Validators.required, Validators.min(1)]],
       MaxPlayersPerTeam: [11, [Validators.required, Validators.min(1)]],
+      TournamentID: [null],
       Description: ['']
     });
   }
@@ -95,7 +114,7 @@ export class AuctionSessionFormComponent {
     request$.subscribe({
       next: (response: any) => {
         this.toast.success(response?.message || (this.isEdit ? 'Session updated successfully.' : 'Session created successfully.'));
-        this.router.navigate(['auction-session-list']);
+        this.router.navigate(['/kkk/auction-session-list']);
       },
       error: (error) => {
         console.error(this.isEdit ? 'Update failed:' : 'Creation failed:', error);

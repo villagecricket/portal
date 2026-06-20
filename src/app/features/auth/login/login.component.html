@@ -1,37 +1,61 @@
 <div class="auth-shell">
-  <mat-card class="login-card mat-elevation-z8">
+  <div class="auth-decor">
+    <div class="decor-ball"></div>
+    <div class="decor-stadium"></div>
+  </div>
+
+  <mat-card class="login-card mat-elevation-z12">
     <div class="brand-block">
-      <div class="brand-badge">KKK</div>
-      <h1>Admin Portal</h1>
-      <p>Sign in to manage players, teams, auctions, and registrations.</p>
+      <div class="brand-logo" style="overflow: hidden;">
+        <ng-container *ngIf="appSettings.logoUrl; else defaultLogo">
+          <img [src]="appSettings.logoUrl" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+        </ng-container>
+        <ng-template #defaultLogo>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5V7.5l6 4.5-6 4.5z"/>
+          </svg>
+        </ng-template>
+      </div>
+      <h1>{{ appSettings.appName }}</h1>
+      <p>Manage teams, auctions, and tournament operations</p>
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Email or Phone</mat-label>
-        <input matInput type="text" formControlName="username" placeholder="you@company.com or 9876543210" />
-        <mat-icon matSuffix>email</mat-icon>
-      </mat-form-field>
+      <div class="form-field-wrapper">
+        <mat-label class="field-label">Email or Phone</mat-label>
+        <mat-form-field appearance="outline" class="w-100 input-field">
+          <input matInput type="text" formControlName="username" placeholder="Enter your email or phone number" autocomplete="username" />
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Password</mat-label>
-        <input matInput formControlName="password" type="password" placeholder="Enter your password" />
-        <mat-icon matSuffix>lock</mat-icon>
-      </mat-form-field>
+      <div class="form-field-wrapper">
+        <mat-label class="field-label">Password</mat-label>
+        <mat-form-field appearance="outline" class="w-100 input-field">
+          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password" autocomplete="current-password" />
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword" class="toggle-password" aria-label="Toggle password visibility">
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </mat-form-field>
+      </div>
 
-      <div *ngIf="errorMessage" class="error-text">{{ errorMessage }}</div>
+      <div *ngIf="errorMessage" class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
 
       <button mat-flat-button color="primary" class="submit-btn" type="submit" [disabled]="loading">
         <span *ngIf="!loading">Sign In</span>
         <span *ngIf="loading" class="spinner-inline">
-          <mat-spinner diameter="18"></mat-spinner>
+          <mat-spinner diameter="20"></mat-spinner>
           Signing in...
         </span>
       </button>
 
-      <button mat-stroked-button color="primary" class="submit-btn" type="button" routerLink="/register">
-        Create an account
-      </button>
     </form>
+
+    <div class="auth-footer">
+      <span>Need help? Contact support</span>
+    </div>
   </mat-card>
 </div>

@@ -25,19 +25,25 @@
         </app-datepicker>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
+        <app-select id="TournamentID" [label]="'Select Tournament'" [control]="form.get('TournamentID')!" [options]="tournamentOptions"
+          placeholder="Select linked tournament">
+        </app-select>
+      </div>
+
+      <div class="col-md-3">
         <app-input id="max_budget" type="number" [control]="form.get('MaxBudget')!" [label]="'Max Budget *'"
           placeholder="e.g., 100000">
         </app-input>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <app-input id="max_players_per_team" type="number" [control]="form.get('MaxPlayersPerTeam')!"
           [label]="'Max Players/Team *'" placeholder="e.g., 11">
         </app-input>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <app-select id="Status" [label]="'Select Status'" [control]="form.get('Status')!" [options]="StatusOptions"
           placeholder="Select Status">
         </app-select>
@@ -56,7 +62,7 @@
     </div>
   </form>
 
-  <div class="mt-5 bg-white shadow rounded p-4" *ngIf="form.get('SessionID')?.value">
+  <!-- <div class="mt-5 bg-white shadow rounded p-4" *ngIf="form.get('SessionID')?.value">
     <h4 class="mb-4 text-primary">Auction Configuration</h4>
 
     <ul class="nav nav-tabs" id="auctionTabs" role="tablist">
@@ -76,11 +82,11 @@
 
     <div class="tab-content pt-3" id="auctionTabsContent">
       <div class="tab-pane fade show active" id="teams" role="tabpanel">
-        <!-- <app-auction-teams [sessionId]="sessionId"></app-auction-teams> -->
+        <app-auction-teams [sessionId]="sessionId"></app-auction-teams>
       </div>
       <div class="tab-pane fade" id="players" role="tabpanel">
-        <!-- <app-auction-team-players [sessionId]="sessionId"></app-auction-team-players> -->
+        <app-auction-team-players [sessionId]="sessionId"></app-auction-team-players>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>

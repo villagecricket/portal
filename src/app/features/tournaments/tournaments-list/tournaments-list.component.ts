@@ -25,8 +25,14 @@ export class TournamentsListComponent implements OnInit {
       next: (res: any) => {
         const data = res.data?.tournaments || res || [];
         data.forEach((t: any) => {
-          t.FullLogoURL = t.LogoURL ? environment.apiUrl + t.LogoURL : 'assets/logo.jpeg';
-          t.FullBannerURL = t.BannerURL ? environment.apiUrl + t.BannerURL : 'assets/MV_4.jpeg';
+          const getImageUrl = (url: string) => {
+            if (!url) return null;
+            if (url.startsWith('http')) return url;
+            if (url.startsWith('/api')) return environment.apiUrl.replace('/api', '') + url;
+            return environment.apiUrl + url;
+          };
+          t.FullLogoURL = getImageUrl(t.LogoURL) || 'assets/logo.jpeg';
+          t.FullBannerURL = getImageUrl(t.BannerURL) || 'assets/MV_4.jpeg';
         });
         this.tournaments.set(data);
       },

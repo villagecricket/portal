@@ -34,7 +34,10 @@ export class ApiService {
 
     post<T>(url: string, body: any, optionsOrParams?: any): Observable<T> {
         const fullUrl = url.startsWith('http') ? url : `${this.baseUrl}${url}`;
-        const options = this.normalizeOptions(optionsOrParams);
+        const isFormData = body instanceof FormData;
+        const options = isFormData
+            ? { headers: new HttpHeaders({ enctype: 'multipart/form-data' }) }
+            : this.normalizeOptions(optionsOrParams);
         return this.http.post<any>(fullUrl, body, options as any) as Observable<T>;
     }
 
