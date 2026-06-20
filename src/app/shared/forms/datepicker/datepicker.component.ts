@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-datepicker',
-  
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -22,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ label }}</mat-label>
-      <input matInput [matDatepicker]="picker" [formControl]="controlAsFormControl" [placeholder]="placeholder" />
+      <input [min]="minDate" matInput [matDatepicker]="picker" [formControl]="controlAsFormControl" [placeholder]="placeholder" />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error *ngIf="control.hasError('required')">Date is required</mat-error>
@@ -34,9 +34,15 @@ export class DatepickerComponent {
   @Input() control!: AbstractControl;
   @Input() label = 'Select Date';
   @Input() placeholder = 'Choose a date';
+  @Input() minDate = new Date();
+  @Input() maxDate?: Date;
 
+  ngOnInit() {
+    this.minDate = new Date();
+    this.minDate.setHours(0, 0, 0, 0);
+  }
 
-    get controlAsFormControl(): FormControl {
+  get controlAsFormControl(): FormControl {
     return this.control as FormControl;
   }
 }

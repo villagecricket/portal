@@ -2,11 +2,16 @@
   <!-- Logo Section -->
   <div class="logo-section d-flex align-items-center mb-4 px-3 pt-3">
     <div class="logo-icon bg-white rounded-circle d-flex align-items-center justify-content-center me-3"
-      style="width: 32px; height: 32px;">
-      <i class="bi bi-diagram-3-fill" style="color: var(--primary-color); font-size: 16px;"></i>
+      style="width: 32px; height: 32px; overflow: hidden;">
+      <ng-container *ngIf="appSettings.logoUrl; else defaultLogo">
+        <img [src]="appSettings.logoUrl" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+      </ng-container>
+      <ng-template #defaultLogo>
+        <i class="bi bi-diagram-3-fill" style="color: var(--primary-color); font-size: 16px;"></i>
+      </ng-template>
     </div>
     <div class="logo-text" *ngIf="visible">
-      <h6 class="m-0 fw-bold text-white tracking-wider" style="font-size: 0.95rem;">Auction Management System</h6>
+      <h6 class="m-0 fw-bold text-white tracking-wider" style="font-size: 0.95rem;">{{ appSettings.appName }}</h6>
       <small class="text-white-50" style="font-size: 0.65rem;">v1.0.0</small>
     </div>
   </div>

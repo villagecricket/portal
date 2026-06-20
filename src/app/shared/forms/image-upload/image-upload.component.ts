@@ -91,7 +91,12 @@ export class ImageUploadComponent {
   @Input() id: string = 'fileInput';
 
   get imageUrl() {
-    return this.previewUrl || environment.apiUrl + this.defaultUrl || 'assets/avatars/default.jpg';
+    if (this.previewUrl) return this.previewUrl;
+    if (!this.defaultUrl) return 'assets/avatars/default.jpg';
+    
+    if (this.defaultUrl.startsWith('http')) return this.defaultUrl;
+    if (this.defaultUrl.startsWith('/api')) return environment.apiUrl.replace('/api', '') + this.defaultUrl;
+    return environment.apiUrl + this.defaultUrl;
   }
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;

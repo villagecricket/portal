@@ -44,7 +44,7 @@ export class GalleryComponent implements OnInit {
   allImages: WritableSignal<GalleryImage[]> = signal([]);
 
   // Filters
-  categories = ['All', 'KPL Matches', 'Team Photos', 'Players', 'Trophy Ceremony', 'Celebrations', 'Events', 'Training'];
+  categories = ['All', 'Matches', 'Team Photos', 'Players', 'Trophy Ceremony', 'Celebrations', 'Events', 'Training'];
   selectedCategory = signal<string>('All');
   searchQuery = signal<string>('');
   sortBy = signal<'date' | 'name' | 'popular'>('date');

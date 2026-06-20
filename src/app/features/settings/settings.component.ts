@@ -50,6 +50,9 @@ interface AppSettings {
     twitter: string;
     youtube: string;
   };
+  upiName: string;
+  upiId: string;
+  upiScannerImage: string;
 }
 
 interface PollOption {
@@ -105,7 +108,10 @@ export class SettingsComponent implements OnInit {
       instagram: 'https://instagram.com/katturcricket',
       twitter: 'https://twitter.com/katturcricket',
       youtube: 'https://youtube.com/katturcricket'
-    }
+    },
+    upiName: '',
+    upiId: '',
+    upiScannerImage: ''
   });
 
   // UI State
@@ -113,9 +119,9 @@ export class SettingsComponent implements OnInit {
   selectedGalleryImages = signal<string[]>([]);
   carouselPreviewMode = signal<boolean>(false);
   currentCarouselIndex = signal<number>(0);
-  galleryCategories = signal<string[]>(['KPL Matches', 'Team Photos', 'Players', 'Trophy Ceremony', 'Celebrations', 'Events']);
+  galleryCategories = signal<string[]>(['Matches', 'Team Photos', 'Players', 'Trophy Ceremony', 'Celebrations', 'Events']);
   newCategoryName = signal<string>('');
-  selectedGalleryCategory = signal<string>('KPL Matches');
+  selectedGalleryCategory = signal<string>('Matches');
 
   // Poll Options State
   pollOptions = signal<string[]>(['', '']);
@@ -132,6 +138,9 @@ export class SettingsComponent implements OnInit {
   isDragging = signal<boolean>(false);
   uploadProgress = signal<number>(0);
   isUploading = signal<boolean>(false);
+  
+  appLogoFile = signal<File | null>(null);
+  upiScannerFile = signal<File | null>(null);
 
   // Carousel Auto-play
   private carouselInterval: any;
@@ -167,7 +176,10 @@ export class SettingsComponent implements OnInit {
               instagram: s.InstagramURL,
               twitter: s.TwitterURL,
               youtube: s.YoutubeURL
-            }
+            },
+            upiName: s.UPIName || '',
+            upiId: s.UPIId || '',
+            upiScannerImage: s.UPIScannerImageURL ? `${environment.apiUrl}${s.UPIScannerImageURL}` : ''
           });
           this.appSettingsForm.patchValue({
             appName: s.AppName,
@@ -180,7 +192,9 @@ export class SettingsComponent implements OnInit {
             facebook: s.FacebookURL,
             instagram: s.InstagramURL,
             twitter: s.TwitterURL,
-            youtube: s.YoutubeURL
+            youtube: s.YoutubeURL,
+            upiName: s.UPIName,
+            upiId: s.UPIId
           });
         }
       }
@@ -269,7 +283,9 @@ export class SettingsComponent implements OnInit {
       facebook: ['https://facebook.com/katturcricket'],
       instagram: ['https://instagram.com/katturcricket'],
       twitter: ['https://twitter.com/katturcricket'],
-      youtube: ['https://youtube.com/katturcricket']
+      youtube: ['https://youtube.com/katturcricket'],
+      upiName: [''],
+      upiId: ['']
     });
 
     this.carouselForm = this.fb.group({
@@ -727,7 +743,10 @@ export class SettingsComponent implements OnInit {
         instagram: formValue.instagram,
         twitter: formValue.twitter,
         youtube: formValue.youtube
-      }
+      },
+      upiName: formValue.upiName,
+      upiId: formValue.upiId,
+      upiScannerImage: this.appSettings().upiScannerImage
     };
 
     this.appSettings.set(settings);
@@ -738,11 +757,27 @@ export class SettingsComponent implements OnInit {
   onLogoFileSelect(event: any): void {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
+      this.appLogoFile.set(file);
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.appSettings.update(settings => ({
           ...settings,
           appLogo: e.target.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onUpiScannerFileSelect(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.upiScannerFile.set(file);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.appSettings.update(settings => ({
+          ...settings,
+          upiScannerImage: e.target.result
         }));
       };
       reader.readAsDataURL(file);
@@ -781,10 +816,16 @@ export class SettingsComponent implements OnInit {
       FacebookURL: this.appSettingsForm.value.facebook,
       InstagramURL: this.appSettingsForm.value.instagram,
       TwitterURL: this.appSettingsForm.value.twitter,
-      YoutubeURL: this.appSettingsForm.value.youtube
+      YoutubeURL: this.appSettingsForm.value.youtube,
+      UPIName: this.appSettingsForm.value.upiName,
+      UPIId: this.appSettingsForm.value.upiId
     };
 
-    this.settingsService.updateAppSettings(appSettingsData).subscribe();
+    this.settingsService.updateAppSettings(
+      appSettingsData, 
+      this.appLogoFile() || undefined,
+      this.upiScannerFile() || undefined
+    ).subscribe();
     this.uploadProgress.set(25);
 
     // 2. Save Carousel (Only new ones with files)

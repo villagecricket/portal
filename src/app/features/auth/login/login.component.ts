@@ -10,6 +10,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '@core/services/auth.service';
+import { SettingsService } from '@core/services/settings.service';
+import { environment } from '@environments/environment';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -29,11 +32,12 @@ import { AuthService } from '@core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private settingsService = inject(SettingsService);
 
   loginForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -42,6 +46,28 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+  hidePassword = true;
+
+  appSettings: any = {
+    appName: 'EPL Admin Portal',
+    logoUrl: null
+  };
+
+  ngOnInit() {
+    this.loadSettings();
+  }
+
+  loadSettings(): void {
+    this.settingsService.getAppSettings().subscribe((res: any) => {
+      if (res.success && res.data?.settings) {
+        const s = res.data.settings;
+        this.appSettings = {
+          appName: s.AppName || 'EPL Admin Portal',
+          logoUrl: s.AppLogoURL ? environment.apiUrl + s.AppLogoURL : null
+        };
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {

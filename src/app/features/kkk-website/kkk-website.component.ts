@@ -12,6 +12,7 @@ import { TeamsService } from '@features/teams/services/teams.service';
 import { SettingsService } from '@core/services/settings.service';
 import { OnboardingService } from '@core/services/onboarding.service';
 import { MatchService } from '../matches/services/match.service';
+import Swal from 'sweetalert2';
 
 export interface Team {
   _id?: string;
@@ -114,15 +115,21 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
   auctionList: any[] = [];
   auctionCountdowns: { [key: string]: any } = {};
   currentAuction = signal<any>(null);
+  registerModalOpen = signal(false);
+  selectedAuctionForReg: any = null;
 
-  // ─── Registration ──────────────────────────────────────────────────────────
-  regForm = { ownerName: '', contactNumber: '', password: '', teamName: '', location: '', slogan: '', sessionId: null as any };
-  isRegistering = false;
-  registrationSuccess = false;
-  registrationError = '';
-  showPassword = false;
-  existingTeamMatch: any | null = null;
-  existingPlayerMatch: any | null = null;
+// ─── Registration ──────────────────────────────────────────────────────────
+   regForm = { ownerName: '', contactNumber: '', password: '', teamName: '', location: '', slogan: '', sessionId: null as any, transactionId: '', notes: '' };
+   isRegistering = false;
+   registrationSuccess = false;
+   registrationError = '';
+   showPassword = false;
+   existingTeamMatch: any | null = null;
+   existingPlayerMatch: any | null = null;
+   regType: 'team' | 'player' = 'team';
+   playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100000, sessionId: null };
+   selectedPhotoFile: File | null = null;
+   selectedReceiptFile: File | null = null;
 
   // ─── Newsletter ────────────────────────────────────────────────────────────
   newsletterEmail = '';
@@ -188,10 +195,23 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
   loadAppSettings() {
     this.settingsService.getAppSettings().subscribe({
       next: (res: any) => {
-        const settings = res.data?.settings || res.data || res;
+        const rawSettings = res.data?.settings || res.data || res;
+        const settings = { ...rawSettings };
+        
+        // Map backend fields to frontend properties
+        settings.appName = settings.AppName;
+        settings.logo = settings.AppLogoURL;
+        
         if (settings?.logo) {
           settings.logoUrl = settings.logo.startsWith('http') || settings.logo.startsWith('assets')
-            ? settings.logo : environment.apiUrl + settings.logo;
+            ? settings.logo : environment.apiUrl.replace('/api', '') + settings.logo;
+        }
+        
+        // Fix UPI scanner image URL — prepend apiUrl for relative paths
+        if (settings?.UPIScannerImageURL &&
+            !settings.UPIScannerImageURL.startsWith('http') &&
+            !settings.UPIScannerImageURL.startsWith('assets')) {
+          settings.UPIScannerImageURL = environment.apiUrl.replace('/api', '') + settings.UPIScannerImageURL;
         }
         this.appSettings.set(settings || {});
         if (settings) {
@@ -475,6 +495,27 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
 
   // ─── Modals ────────────────────────────────────────────────────────────────
 
+  openRegisterModal(auction?: any) {
+    this.selectedAuctionForReg = auction || null;
+    // Pre-fill session if auction is provided
+    if (auction) {
+      this.regForm.sessionId = auction.SessionID || auction.id || auction._id || null;
+    }
+    this.registrationSuccess = false;
+    this.registrationError = '';
+    this.regType = 'team';
+    this.registerModalOpen.set(true);
+    if (this.isBrowser) document.body.style.overflow = 'hidden';
+  }
+
+  closeRegisterModal() {
+    this.registerModalOpen.set(false);
+    if (this.isBrowser) document.body.style.overflow = '';
+    // Reset form state
+    this.registrationSuccess = false;
+    this.registrationError = '';
+  }
+
   openTeamModal(team: Team) {
     this.selectedTeam.set(team);
     this.teamModalOpen.set(true);
@@ -532,8 +573,7 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
 
   // ─── Registration ──────────────────────────────────────────────────────────
 
-  regType: 'team' | 'player' = 'team';
-  playerRegForm = { playerName: '', fatherName: '', contactNumber: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100000, sessionId: null };
+
 
   setRegistrationType(type: 'team' | 'player') {
     this.regType = type;
@@ -608,21 +648,44 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
     return String(value || '').trim().toLowerCase();
   }
 
+  onReceiptFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedReceiptFile = file;
+    }
+  }
+
   submitRegistration() {
+    const phone = this.normalizePhone(this.regForm.contactNumber);
+    if (!/^\d{10}$/.test(phone)) {
+      this.registrationError = 'Please enter a valid 10-digit mobile number.';
+      return;
+    }
     if (!this.regForm.ownerName || !this.regForm.contactNumber || !this.regForm.password || !this.regForm.teamName || !this.regForm.sessionId) {
       this.registrationError = 'Please fill all required fields (including Auction Session).';
       return;
     }
+    if (!this.regForm.transactionId || !this.selectedReceiptFile) {
+      this.registrationError = 'Please complete the payment and upload the payment screenshot with Transaction ID.';
+      return;
+    }
     this.isRegistering = true;
     this.registrationError = '';
-    this.onboardingService.registerTeam(this.regForm).subscribe({
+    const payload = { ...this.regForm, contactNumber: phone };
+    this.onboardingService.registerTeam(payload, this.selectedReceiptFile).subscribe({
       next: () => {
         this.isRegistering = false;
         this.registrationSuccess = true;
         this.existingTeamMatch = null;
-        this.regForm = { ownerName: '', contactNumber: '', password: '', teamName: '', location: '', slogan: '', sessionId: null as any };
+        this.selectedReceiptFile = null;
+        this.regForm = { ownerName: '', contactNumber: '', password: '', teamName: '', location: '', slogan: '', sessionId: null as any, transactionId: '', notes: '' };
         this.getAuctionList();
         this.getTeamList();
+        // Auto-close the modal after showing success for 3 seconds
+        setTimeout(() => {
+          this.registrationSuccess = false;
+          this.closeRegisterModal();
+        }, 3500);
       },
       error: (err: any) => {
         this.isRegistering = false;
@@ -632,25 +695,56 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
   }
 
   submitPlayerRegistration() {
+    const phone = this.normalizePhone(this.playerRegForm.contactNumber);
+    if (!/^\d{10}$/.test(phone)) {
+      this.registrationError = 'Please enter a valid 10-digit mobile number.';
+      return;
+    }
     if (!this.playerRegForm.playerName || !this.playerRegForm.fatherName || !this.playerRegForm.contactNumber || !this.playerRegForm.sessionId) {
       this.registrationError = 'Please fill all required fields (Name, Father Name, Contact, Auction Session).';
       return;
     }
     this.isRegistering = true;
     this.registrationError = '';
-    this.onboardingService.registerPlayerForAuction(this.playerRegForm).subscribe({
+    const payload: any = { ...this.playerRegForm, contactNumber: phone };
+    if (this.selectedPhotoFile) {
+      payload.photoFile = this.selectedPhotoFile;
+    }
+    this.onboardingService.registerPlayerForAuction(payload).subscribe({
       next: () => {
         this.isRegistering = false;
         this.registrationSuccess = true;
         this.existingPlayerMatch = null;
-        this.playerRegForm = { playerName: '', fatherName: '', contactNumber: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100000, sessionId: null };
+        this.playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100000, sessionId: null };
+        this.selectedPhotoFile = null;
         this.getPlayerList();
+        Swal.fire({
+          icon: 'success',
+          title: 'Player Registered!',
+          text: 'You are now registered for the auction pool.',
+          confirmButtonColor: '#0ea5e9',
+          timer: 3000,
+          timerProgressBar: true
+        });
+        setTimeout(() => this.registrationSuccess = false, 3000);
       },
       error: (err: any) => {
         this.isRegistering = false;
         this.registrationError = err.error?.message || 'Player Registration failed. Please try again.';
       }
     });
+  }
+
+  onPhotoSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.selectedPhotoFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.playerRegForm.photoUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   // ─── Newsletter ────────────────────────────────────────────────────────────
@@ -666,6 +760,10 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
   // ─── Scroll & Navigation ───────────────────────────────────────────────────
 
   scrollTo(sectionId: string) {
+    if (sectionId === 'register') {
+      this.openRegisterModal();
+      return;
+    }
     this.activeSection.set(sectionId);
     this.mobileNavOpen = false;
     if (this.isBrowser) {
@@ -691,7 +789,7 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
 
   updateActiveSection() {
     if (!this.isBrowser) return;
-    const sections = ['home', 'teams', 'standings', 'fixtures', 'players', 'stats', 'sponsors', 'auction', 'gallery', 'register', 'contact'];
+    const sections = ['home', 'teams', 'standings', 'fixtures', 'players', 'stats', 'sponsors', 'auction', 'gallery', 'contact'];
     const scrollPos = window.pageYOffset + 120;
     for (const id of sections) {
       const el = document.getElementById(id);
@@ -708,6 +806,7 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
       if (this.lightboxOpen()) this.closeLightbox();
       if (this.teamModalOpen()) this.closeTeamModal();
       if (this.playerModalOpen()) this.closePlayerModal();
+      if (this.registerModalOpen()) this.closeRegisterModal();
     }
     if (this.lightboxOpen()) {
       if (e.key === 'ArrowRight') this.nextLightboxImage();

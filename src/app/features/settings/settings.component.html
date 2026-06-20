@@ -282,6 +282,38 @@
                                     </div>
                                 </div>
 
+                                <!-- UPI Information -->
+                                <div class="settings-section">
+                                    <h3 class="section-title">💳 UPI Payment Details</h3>
+                                    
+                                    <div class="form-group">
+                                        <label>UPI Scanner Image</label>
+                                        <div class="logo-upload">
+                                            <div class="logo-preview">
+                                                <img [src]="appSettings().upiScannerImage || 'assets/placeholder-qr.png'" alt="UPI Scanner">
+                                            </div>
+                                            <input type="file" #upiScannerFileInput accept="image/*"
+                                                (change)="onUpiScannerFileSelect($event)" style="display: none;">
+                                            <button type="button" class="btn-upload-logo"
+                                                (click)="upiScannerFileInput.click()">
+                                                Upload QR Code
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>UPI Name</label>
+                                        <input type="text" formControlName="upiName"
+                                            placeholder="Name associated with UPI">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>UPI ID</label>
+                                        <input type="text" formControlName="upiId"
+                                            placeholder="example@upi">
+                                    </div>
+                                </div>
+
                                 <!-- Social Media -->
                                 <div class="settings-section">
                                     <h3 class="section-title">🌐 Social Media</h3>

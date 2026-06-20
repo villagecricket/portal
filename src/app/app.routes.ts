@@ -10,19 +10,17 @@ export const routes: Routes = [
         loadComponent: () => import('@features/kkk-website/kkk-website.component').then(m => m.KkkWebsiteComponent),
         pathMatch: 'full'
     },
-    {
-        path: 'polling',
-        loadComponent: () => import('@features/polling/components/polling-page.component').then(m => m.PollingPageComponent),
-    },
     // ── Owner Dashboard (standalone, shown after login) ──
     {
         path: 'owner-dashboard',
         loadComponent: () => import('./features/auction/owner-dashboard/owner-dashboard.component').then(m => m.OwnerDashboardComponent),
+        canActivate: [authGuard],
     },
     // ── Owner Auction Live View (standalone, no admin layout) ──
     {
         path: 'auction-live',
         loadComponent: () => import('./features/auction/owner-auction-live/owner-auction-live.component').then(m => m.OwnerAuctionLiveComponent),
+        canActivate: [authGuard],
     },
     // ── Broadcast System (All standalone, no layout wrapper) ──
     // Scorecard Overlay for OBS: http://localhost:4200/overlay/{matchId}

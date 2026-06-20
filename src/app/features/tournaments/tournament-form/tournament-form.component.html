@@ -29,6 +29,9 @@
 
                                 <app-select label="Match Format" [control]="tournamentForm.get('MatchFormat')!"
                                     [options]="matchFormats"></app-select>
+                                    
+                                <app-select label="Ball Type" [control]="tournamentForm.get('BallType')!"
+                                    [options]="ballTypes"></app-select>
 
                                 <app-input label="Overs Per Match" [control]="tournamentForm.get('OversPerMatch')!"
                                     type="number" />
@@ -84,6 +87,43 @@
                             <div class="col-md-6">
                                 <app-datepicker label="End Date *"
                                     [control]="tournamentForm.get('EndDate')!"></app-datepicker>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial & Prizes -->
+                    <div class="premium-card">
+                        <h5 class="section-title"><i class="bi bi-wallet2 me-2"></i>Financial & Prizes</h5>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <app-input label="Team Registration Fee (₹)" type="number"
+                                    [control]="tournamentForm.get('RegistrationFee')!"></app-input>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label text-secondary fw-semibold">Number of Prizes</label>
+                                    <input type="number" class="form-control" placeholder="e.g. 3" 
+                                           (input)="updatePrizeCount($event)" [value]="prizeDetails.length" min="0" max="20">
+                                </div>
+                            </div>
+                            
+                            <div class="col-12" *ngIf="prizeDetails.length > 0">
+                                <h6 class="fw-bold mb-3">Prize Distribution</h6>
+                                <div class="row g-3" [formGroup]="tournamentForm">
+                                    <ng-container formArrayName="PrizeDetails">
+                                        <div class="col-md-6" *ngFor="let prize of prizeDetails.controls; let i = index" [formGroupName]="i">
+                                            <div class="d-flex gap-2">
+                                                <div class="flex-grow-1">
+                                                    <input type="text" class="form-control mb-2" formControlName="title" placeholder="Prize Title (e.g. Winner)">
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <input type="number" class="form-control" formControlName="amount" placeholder="Amount (₹)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
                             </div>
                         </div>
                     </div>

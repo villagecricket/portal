@@ -27,13 +27,22 @@
     </div>
   </header>
 
-  <!-- Loading -->
-  <div class="loading-screen" *ngIf="loading()">
-    <div class="spinner"></div>
-    <p>Connecting to auction...</p>
-  </div>
+<!-- Loading -->
+    <div class="loading-screen" *ngIf="loading()">
+        <div class="spinner"></div>
+        <p>Connecting to auction...</p>
+    </div>
 
-  <!-- Waiting State -->
+    <!-- Error State -->
+    <div class="waiting-screen" *ngIf="!loading() && error()">
+        <div class="waiting-card error-card">
+            <div class="waiting-icon">⚠️</div>
+            <h2>{{ error() }}</h2>
+            <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Waiting State -->
   <div class="waiting-screen" *ngIf="!loading() && auctionStatus() === 'waiting'">
     <div class="waiting-card">
       <div class="waiting-icon">⏰</div>
@@ -141,11 +150,11 @@
 
         <!-- Bid History -->
         <div class="bid-history" *ngIf="bidHistory().length > 0">
-          <h4>Recent Bids</h4>
-          <div class="bid-entry" *ngFor="let bid of bidHistory()" [class.my-bid]="bid.teamId === myTeamId">
-            <span class="bid-team-name">{{ bid.teamName ?? ('Team ' + bid.teamId) }}</span>
-            <span class="bid-amount">₹{{ bid.bidAmount?.toLocaleString() }}</span>
-          </div>
+            <h4>Recent Bids</h4>
+            <div class="bid-entry" *ngFor="let bid of bidHistory()" [class.my-bid]="bid.teamId === myTeamId()">
+                <span class="bid-team-name">{{ bid.teamName ?? ('Team ' + bid.teamId) }}</span>
+                <span class="bid-amount">₹{{ bid.bidAmount?.toLocaleString() }}</span>
+            </div>
         </div>
       </div>
 
@@ -192,7 +201,7 @@
         <!-- Other Teams Summary -->
         <div class="other-teams">
           <h4>All Teams</h4>
-          <div class="team-row" *ngFor="let team of allTeams()" [class.my-team-row]="team.teamId === myTeamId">
+          <div class="team-row" *ngFor="let team of allTeams()" [class.my-team-row]="team.teamId === myTeamId()">
             <img [src]="getTeamLogoUrl(team.logo)" [alt]="team.name" class="team-logo-xs">
             <span class="team-name-sm">{{ team.name }}</span>
             <span class="team-budget-sm">₹{{ (team.remainingBudget ?? 0).toLocaleString() }}</span>

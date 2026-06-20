@@ -14,11 +14,14 @@ export class SettingsService {
         return this.api.get(`${this.endpoint}/app-settings`);
     }
 
-    updateAppSettings(data: any, logoFile?: File): Observable<any> {
+    updateAppSettings(data: any, logoFile?: File, upiScannerFile?: File): Observable<any> {
         const formData = new FormData();
         Object.keys(data).forEach(key => formData.append(key, data[key]));
         if (logoFile) {
             formData.append('logo', logoFile);
+        }
+        if (upiScannerFile) {
+            formData.append('upiScanner', upiScannerFile);
         }
         return this.api.put(`${this.endpoint}/app-settings`, formData);
     }
