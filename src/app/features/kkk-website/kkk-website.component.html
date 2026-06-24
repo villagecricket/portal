@@ -619,7 +619,7 @@
     <div class="footer-grid">
       <!-- Brand column -->
       <div class="footer-brand">
-        <img [src]="appSettings().logoUrl || 'assets/logo.jpeg'" alt="KPL" class="footer-logo">
+        <h2 class="footer-ecl-text">ECL</h2>
         <h4>{{ appSettings().appName || 'Kattur Premier League' }}</h4>
         <p>{{ appSettings().appDescription || 'Village cricket at its finest. Pride, passion, and legacy since 2021.' }}
         </p>
@@ -638,7 +638,7 @@
       </div>
 
       <!-- Quick links -->
-      <div class="footer-links-col">
+      <!-- <div class="footer-links-col">
         <h5>Quick Links</h5>
         <ul>
           <li *ngFor="let item of [
@@ -649,11 +649,11 @@
             <a (click)="scrollTo(item.id)">{{ item.label }}</a>
           </li>
           <li><a routerLink="/login">Login</a></li>
-        </ul>
-      </div>
+        </ul> 
+      </div>-->
 
       <!-- Season -->
-      <div class="footer-links-col">
+      <!-- <div class="footer-links-col">
         <h5>Season Info</h5>
         <ul>
           <li><span>Season</span> {{ selectedSeason }}</li>
@@ -661,7 +661,7 @@
           <li><span>Players</span> {{ players.length }}</li>
           <li><span>Matches Played</span> {{ completedMatches().length }}</li>
         </ul>
-      </div>
+      </div> -->
 
       <!-- Newsletter -->
       <div class="footer-newsletter">
@@ -678,9 +678,12 @@
     </div>
 
     <div class="footer-bottom">
-      <span>&copy; {{ selectedSeason }} {{ appSettings().appName || 'Kattur Premier League' }}. All rights
+      <span>&copy; {{ selectedSeason }} The Ravens Analytics. All rights
         reserved.</span>
-      <span>Designed with passion for cricket</span>
+      <div class="powered-by">
+        <span>Powered by</span>
+        <img src="assets/ravens-analytics.png" alt="The Ravens Analytics" class="powered-by-logo">
+      </div>
     </div>
   </div>
 </footer>
