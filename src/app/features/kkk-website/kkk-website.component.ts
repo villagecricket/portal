@@ -127,7 +127,7 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
   existingTeamMatch: any | null = null;
   existingPlayerMatch: any | null = null;
   regType: 'team' | 'player' = 'team';
-  playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100, sessionId: null };
+  playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', jerseySize: 'M', basePrice: 100, sessionId: null };
   selectedPhotoFile: File | null = null;
   selectedReceiptFile: File | null = null;
 
@@ -678,7 +678,8 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
       contactNumber: this.playerRegForm.contactNumber || player.Mobile || '',
       role: player.Role || this.playerRegForm.role,
       battingStyle: player.BattingStyle || this.playerRegForm.battingStyle,
-      bowlingStyle: player.BowlingStyle || this.playerRegForm.bowlingStyle
+      bowlingStyle: player.BowlingStyle || this.playerRegForm.bowlingStyle,
+      jerseySize: player.JerseySize || this.playerRegForm.jerseySize
     };
     if (announce) this.registrationError = '';
   }
@@ -758,7 +759,7 @@ export class KkkWebsiteComponent implements OnInit, OnDestroy {
         this.isRegistering = false;
         this.registrationSuccess = true;
         this.existingPlayerMatch = null;
-        this.playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', basePrice: 100, sessionId: null };
+        this.playerRegForm = { playerName: '', fatherName: '', contactNumber: '', photoUrl: '', role: 'Batsman', battingStyle: 'Right-hand bat', bowlingStyle: 'Right-arm medium', jerseySize: 'M', basePrice: 100, sessionId: null };
         this.selectedPhotoFile = null;
         this.getPlayerList();
         Swal.fire({
