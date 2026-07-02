@@ -949,9 +949,23 @@
           </div>
         </div>
 
-        <div class="reg-form-group">
-          <label>Base Price (₹)</label>
-          <input type="number" [(ngModel)]="playerRegForm.basePrice" name="basePrice" placeholder="100" required>
+        <div class="reg-form-row">
+          <div class="reg-form-group">
+            <label>Jersey / T-Shirt Size <span class="req">*</span></label>
+            <select [(ngModel)]="playerRegForm.jerseySize" name="jerseySize" required>
+              <option value="XS">XS — Extra Small</option>
+              <option value="S">S — Small</option>
+              <option value="M">M — Medium</option>
+              <option value="L">L — Large</option>
+              <option value="XL">XL — Extra Large</option>
+              <option value="XXL">XXL — Double Extra Large</option>
+              <option value="XXXL">XXXL — Triple Extra Large</option>
+            </select>
+          </div>
+          <div class="reg-form-group">
+            <label>Base Price (₹)</label>
+            <input type="number" [(ngModel)]="playerRegForm.basePrice" name="basePrice" placeholder="100" required>
+          </div>
         </div>
 
         <button type="submit" class="reg-submit-btn" [disabled]="isRegistering">
